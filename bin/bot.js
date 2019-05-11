@@ -3,11 +3,11 @@
 const program = require("commander");
 const inquirer = require("inquirer");
 const Bot = require("../index.js");
-const tempDir = require("temp-dir");
+const tempdir = require("../lib/tempdir");
 const path = require("path");
 const fs = require("fs");
 const debug = require("debug")("chatopera:sdk:cli");
-const utils = require("../src/utils.js");
+const utils = require("../lib/utils.js");
 
 /**
  * Connect to a bot and start chat.
@@ -117,7 +117,7 @@ program
 
         // compress botarchive to zip
         let ts = utils.getTimestamp();
-        tempc66 = path.join(tempDir, pkg.name + "." + ts + ".c66");
+        tempc66 = path.join(tempdir, pkg.name + "." + ts + ".c66");
 
         await utils.zipDirectory(botarchive, tempc66);
         debug("deploy: generate temp file %s", tempc66);
@@ -151,4 +151,4 @@ program
     }
   });
 
-program.version("1.5.0").parse(process.argv);
+program.version(require("../package.json").version).parse(process.argv);

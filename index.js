@@ -2,15 +2,15 @@
  * Chatopera Node.js SDK
  */
 const debug = require("debug")("chatopera:sdk:index");
-const utils = require("./src/utils");
 const request = require("superagent");
-const generate = require("./src/generate-authorization");
+const utils = require("./lib/utils");
+const generate = require("./lib/generate-authorization");
 const basePath = "/api/v1/chatbot";
 const fs = require("fs");
 
 // 处理JSON返回值
 // TODO request.parse['application/json'] 有bug, 否则用它更好
-function extract(res) {
+function successHandler(res) {
   return new Promise((resolve, reject) => {
     let { rc, data, error, err, msg, message } = res.body;
     if (rc === 0) {
@@ -30,6 +30,14 @@ function extract(res) {
       reject(new Error(error || err || msg || message));
     }
   });
+}
+
+/**
+ * 处理异常返回
+ * @param {*} err
+ */
+function failHandler(err) {
+  return Promise.reject(err);
 }
 
 /**
@@ -69,68 +77,58 @@ class Chatbot {
    * 获得详情
    */
   detail() {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}`;
-      request
-        .get(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.GET,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}`;
+    return request
+      .get(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.GET,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   /**
    * 检索知识库
    */
   faq(userId, textMessage) {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}/faq/query`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}/faq/query`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .send({
-          fromUserId: userId,
-          query: textMessage
-        })
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .send({
+        fromUserId: userId,
+        query: textMessage
+      })
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -140,37 +138,33 @@ class Chatbot {
    * @param {*} isDebug
    */
   conversation(userId, textMessage, isDebug = false) {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}/conversation/query`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    debug("conversation userId %s, textMessage %s", userId, textMessage);
+    let endpoint = `${basePath}/${this.clientId}/conversation/query`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .send({
-          fromUserId: userId,
-          textMessage: textMessage,
-          isDebug: isDebug
-        })
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .send({
+        fromUserId: userId,
+        textMessage: textMessage,
+        isDebug: isDebug
+      })
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -180,36 +174,31 @@ class Chatbot {
    * @param {*} sortby
    */
   users(limit = 50, page = 1, sortby = "-lasttime") {
-    return new Promise((resolve, reject) => {
-      let endpoint =
-        basePath +
-        "/" +
-        this.clientId +
-        `/users?page=${page}&limit=${limit}&sortby=${sortby}`;
-      request
-        .get(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.GET,
-            endpoint
-          )
+    let endpoint =
+      basePath +
+      "/" +
+      this.clientId +
+      `/users?page=${page}&limit=${limit}&sortby=${sortby}`;
+    return request
+      .get(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.GET,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -219,36 +208,31 @@ class Chatbot {
    * @param {*} page
    */
   chats(userId, limit = 50, page = 1) {
-    return new Promise((resolve, reject) => {
-      let endpoint =
-        basePath +
-        "/" +
-        this.clientId +
-        `/users/${userId}/chats?page=${page}&limit=${limit}`;
-      request
-        .get(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.GET,
-            endpoint
-          )
+    let endpoint =
+      basePath +
+      "/" +
+      this.clientId +
+      `/users/${userId}/chats?page=${page}&limit=${limit}`;
+    return request
+      .get(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.GET,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -256,32 +240,27 @@ class Chatbot {
    * @param {*} userId
    */
   mute(userId) {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}/users/${userId}/mute`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}/users/${userId}/mute`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -289,32 +268,27 @@ class Chatbot {
    * @param {*} userId
    */
   unmute(userId) {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}/users/${userId}/unmute`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}/users/${userId}/unmute`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   /**
@@ -322,67 +296,57 @@ class Chatbot {
    * @param {*} userId
    */
   ismute(userId) {
-    return new Promise((resolve, reject) => {
-      let endpoint = `${basePath}/${this.clientId}/users/${userId}/ismute`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}/users/${userId}/ismute`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 
   deployConversation(botarchive) {
-    return new Promise((resolve, reject) => {
-      let exist = fs.existsSync(botarchive);
-      if (!exist) {
-        return reject(new Error("File not exist."));
-      }
+    let exist = fs.existsSync(botarchive);
+    if (!exist) {
+      return reject(new Error("File not exist."));
+    }
 
-      let endpoint = `${basePath}/${this.clientId}/conversation/droplet/import`;
-      request
-        .post(this.host + endpoint)
-        .set("Content-Type", "multipart/form-data")
-        .set("Accept", "application/json")
-        .attach("droplet", botarchive)
-        .set(
-          "Authorization",
-          generate(
-            this.clientId,
-            this.clientSecret,
-            utils.HTTP_METHOD.POST,
-            endpoint
-          )
+    let endpoint = `${basePath}/${this.clientId}/conversation/droplet/import`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "multipart/form-data")
+      .set("Accept", "application/json")
+      .attach("droplet", botarchive)
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
         )
-        .then(res => {
-          return extract(res);
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(err => {
-          debug("catch an error %o", err);
-          return reject(err);
-        });
-    });
+      )
+      .then(successHandler, failHandler);
   }
 }
 

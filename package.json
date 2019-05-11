@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Official sdk of Chatopera",
   "main": "index.js",
   "bin": {
@@ -26,8 +26,7 @@
     "commander": "^2.20.0",
     "debug": "^4.1.1",
     "inquirer": "^6.3.1",
-    "superagent": "^5.0.5",
-    "temp-dir": "^1.0.0"
+    "superagent": "^5.0.5"
   },
   "devDependencies": {
     "ava": "^0.25.0"
