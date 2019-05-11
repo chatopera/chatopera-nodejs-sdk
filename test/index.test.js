@@ -1,73 +1,84 @@
-const test = require('ava');
-const debug = require('debug')('chatopera:sdk:test');
-const generate = require('../src/generate-authorization');
-const Chatbot = require('../index');
-const clientId = '5c134649aa257e67b216c6a5';
-const clientSecret = 'b5287df035e815b59546077f4eea705f';
+const test = require("ava");
+const debug = require("debug")("chatopera:sdk:test");
+const generate = require("../src/generate-authorization");
+const Chatbot = require("../index");
+const clientId = "5cd29bf76ffd6400173e0189";
+const clientSecret = "0d8e43cc4de22e9e2cb89f6924fc96e7";
+const host = "https://bot.chatopera.com";
+const path = require("path");
+const curdir = __dirname;
 
-test('Test generate token', async t => {
+test("Test generate token", async t => {
   const token = generate(
     clientId,
     clientSecret,
-    'POST',
+    "POST",
     `/api/v1/chatbot/${clientId}/faq/database`
   );
-  console.log('token', token);
+  console.log("token", token);
   t.pass();
 });
 
-test('Test get chatbot detail by Id', async t => {
+test("Test get chatbot detail by Id", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
   let resp = await chatbot.detail();
-  console.log('detail', resp);
+  debug("detail %o, bot name: %s", resp, resp["name"]);
   t.pass();
 });
 
-test('Test query conversation', async t => {
+test("Test query conversation", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.conversation('nodesdk', '你好');
-  console.log('conversation', resp);
+  let resp = await chatbot.conversation("nodesdk", "hello");
+  console.log("conversation", resp);
   t.pass();
 });
 
-test('Test query faq', async t => {
+test("Test query faq", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.faq('nodesdk', '停效期间的保单是否能办理减保');
-  console.log('faq', resp);
+  let resp = await chatbot.faq("nodesdk", "what is your name");
+  console.log("faq", resp);
   t.pass();
 });
 
-test('Test get user list', async t => {
+test("Test get user list", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
   let resp = await chatbot.users();
-  console.log('users', resp);
+  console.log("users", resp);
   t.pass();
 });
 
-test.only('Test get chat history', async t => {
+test("Test get chat history", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.chats('nodesdk');
-  console.log('chats', resp);
+  let resp = await chatbot.chats("nodesdk");
+  console.log("chats", resp);
   t.pass();
 });
 
-test('Test mute user', async t => {
+test.skip("Test mute user", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.mute('nodesdk');
-  console.log('mute', resp);
+  let resp = await chatbot.mute("nodesdk");
+  console.log("mute", resp);
   t.pass();
 });
 
-test.skip('Test unmute user', async t => {
+test("Test unmute user", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.unmute('nodesdk');
-  console.log('unmute', resp);
+  let resp = await chatbot.unmute("nodesdk");
+  console.log("unmute", resp);
   t.pass();
 });
 
-test('Test ismute user', async t => {
+test("Test ismute user", async t => {
   const chatbot = new Chatbot(clientId, clientSecret);
-  let resp = await chatbot.ismute('nodesdk');
-  console.log('ismute', resp);
+  let resp = await chatbot.ismute("nodesdk");
+  console.log("ismute", resp);
+  t.pass();
+});
+
+test("Test deploy conversation c66", async t => {
+  const chatbot = new Chatbot(clientId, clientSecret);
+  const c66 = path.join(curdir, "fixtures", "Eliza.1.0.0.c66");
+  let resp = await chatbot.deployConversation(c66);
+  console.log("deployConversation", resp);
   t.pass();
 });
