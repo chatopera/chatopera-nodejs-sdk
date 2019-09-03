@@ -100,10 +100,10 @@ program
       console.log(">> connect to https://bot.chatopera.com ...");
     }
 
+    let tempc66 = null;
+    let isRemoveC66 = false;
     if (fs.existsSync(botarchive)) {
       let isDirectory = fs.lstatSync(botarchive).isDirectory();
-      let tempc66 = null;
-      let isRemoveC66 = false;
       if (!isDirectory && botarchive.endsWith(".c66")) {
         // 直接推送
         tempc66 = botarchive;
@@ -131,7 +131,7 @@ program
 
     let client = null;
     if (provider) {
-      new Bot(clientid, clientsecret, provider);
+      client = new Bot(clientid, clientsecret, provider);
     } else {
       client = new Bot(clientid, clientsecret);
     }
