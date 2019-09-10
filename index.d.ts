@@ -51,6 +51,35 @@ declare interface DeployConversationResult {
   msg: string;
 }
 
+declare interface IntentSlot {
+  dictname: string;
+  name: string;
+  requires: boolean;
+  val: string;
+}
+
+declare interface IntentSessionResult {
+  channel: string;
+  createdate: string;
+  id: string;
+  entities: IntentSlot[];
+  intent_name: string;
+  resolved: boolean;
+  uid: string;
+}
+
+declare interface IntentMessage {
+  receiver: string;
+  is_proactive: boolean;
+  is_fallback: boolean;
+  textMessage: string;
+}
+
+declare interface IntentChatResult {
+  message: IntentMessage;
+  session: IntentSessionResult;
+}
+
 declare class Chatbot {
   constructor(
     clientId: string,
@@ -129,6 +158,25 @@ declare class Chatbot {
    * @param botarchive 文件路径
    */
   deployConversation(botarchive: string): Promise<DeployConversationResult>;
+
+  /**
+   * 创建意图session
+   * @param uid
+   * @param channel
+   */
+  intentSession(uid: string, channel: string): Promise<IntentSessionResult>;
+
+  /**
+   * 意图对话
+   * @param sessionId
+   * @param uid
+   * @param textMessage
+   */
+  intentChat(
+    sessionId: string,
+    uid: string,
+    textMessage: string
+  ): Promise<IntentChatResult>;
 }
 
-exports = Chatbot;
+export = Chatbot;
