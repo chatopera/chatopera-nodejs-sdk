@@ -349,7 +349,7 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
-  intentSession(uid, channel) {
+  clauseSession(uid, channel) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/session`;
     return request
       .post(this.host + endpoint)
@@ -373,7 +373,7 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
-  intentSessionDetail(sessionId) {
+  clauseSessionDetail(sessionId) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/session/${sessionId}`;
     return request
       .get(this.host + endpoint)
@@ -396,7 +396,7 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
-  intentChat(sessionId, uid, textMessage) {
+  clauseChat(sessionId, uid, textMessage) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/chat`;
     return request
       .post(this.host + endpoint)

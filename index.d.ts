@@ -164,13 +164,13 @@ declare class Chatbot {
    * @param uid
    * @param channel
    */
-  intentSession(uid: string, channel: string): Promise<IntentSessionResult>;
+  clauseSession(uid: string, channel: string): Promise<IntentSessionResult>;
 
   /**
    * 获取意图session详情
    * @param sessionId 
    */
-  intentSessionDetail(sessionId: string);
+  clauseSessionDetail(sessionId: string);
 
   /**
    * 意图对话
@@ -178,7 +178,7 @@ declare class Chatbot {
    * @param uid
    * @param textMessage
    */
-  intentChat(
+  clauseChat(
     sessionId: string,
     uid: string,
     textMessage: string
