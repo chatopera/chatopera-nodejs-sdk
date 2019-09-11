@@ -1,13 +1,13 @@
 {
   "name": "@chatopera/sdk",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Official sdk of Chatopera",
   "main": "index.js",
   "bin": {
     "bot": "bin/bot.js"
   },
   "scripts": {
-    "test": "DEBUG=chatopera* ava",
+    "test": "DEBUG=chatopera* NODE_ENV=development ava",
     "test:watch": "DEBUG=chatopera* ava --watch test/"
   },
   "keywords": [

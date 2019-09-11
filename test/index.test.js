@@ -1,9 +1,9 @@
 const test = require("ava");
 const debug = require("debug")("chatopera:sdk:test");
-const generate = require("../src/generate-authorization");
+const generate = require("../lib/generate-authorization");
 const Chatbot = require("../index");
-const clientId = "5cd29bf76ffd6400173e0189";
-const clientSecret = "0d8e43cc4de22e9e2cb89f6924fc96e7";
+const clientId = "xxx";
+const clientSecret = "xxx";
 const path = require("path");
 const curdir = __dirname;
 // const host = "https://bot.chatopera.com";
@@ -85,5 +85,32 @@ test("Test deploy conversation c66", async t => {
   const c66 = path.join(curdir, "fixtures", "Eliza.1.0.0.c66");
   let resp = await chatbot.deployConversation(c66);
   console.log("deployConversation", resp);
+  t.pass();
+});
+
+test("Test intent chat#create session", async t => {
+  const chatbot = new Chatbot(clientId, clientSecret);
+  const session = await chatbot.intentSession("node007", "testclient");
+  debug("intent session: %j", session);
+  t.pass();
+});
+
+test("Test intent chat#get session detail", async t => {
+  const chatbot = new Chatbot(clientId, clientSecret);
+  const session = await chatbot.intentSessionDetail(
+    "3CC4CB8388981EB1E7F9C81C00000000"
+  );
+  debug("intent session: %j", session);
+  t.pass();
+});
+
+test.only("Test intent chat", async t => {
+  const chatbot = new Chatbot(clientId, clientSecret);
+  const session = await chatbot.intentChat(
+    "3CC4CB8388981EB1E7F9C81C00000000",
+    "node007",
+    "我想打车"
+  );
+  debug("intent session: %j", session);
   t.pass();
 });

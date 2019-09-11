@@ -84,7 +84,7 @@ declare class Chatbot {
   constructor(
     clientId: string,
     clientSecret: string,
-    host: string = 'https://bot.chatopera.com'
+    host: string = "https://bot.chatopera.com"
   );
 
   /**
@@ -120,7 +120,7 @@ declare class Chatbot {
   users(
     limit: number = 50,
     page: number = 1,
-    sortby: string = '-lasttime'
+    sortby: string = "-lasttime"
   ): Promise<UserResult[]>;
 
   /**
@@ -164,13 +164,13 @@ declare class Chatbot {
    * @param uid
    * @param channel
    */
-  clauseSession(uid: string, channel: string): Promise<IntentSessionResult>;
+  intentSession(uid: string, channel: string): Promise<IntentSessionResult>;
 
   /**
    * 获取意图session详情
-   * @param sessionId 
+   * @param sessionId
    */
-  clauseSessionDetail(sessionId: string);
+  intentSessionDetail(sessionId: string);
 
   /**
    * 意图对话
@@ -178,7 +178,7 @@ declare class Chatbot {
    * @param uid
    * @param textMessage
    */
-  clauseChat(
+  intentChat(
     sessionId: string,
     uid: string,
     textMessage: string

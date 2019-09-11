@@ -133,6 +133,31 @@ var reply = await chatbot.faq("张三", "停效期间的保单是否能办理减
 
 说明：返回值为数组，*id*代表问答对 ID，*score*是相似度分数，*reply*是回复。在含有多个元素时按*score*降序排列，*score*的分数在[0,1]之间，越接近 1 越相似。
 
+### 进行意图识别对话
+
+- 创建 session
+
+```
+var session = await chatbot.intentSession(uid, channel);
+# 得到sessionID: session.id
+```
+
+其中，`uid`代表用户的唯一表示，`channel`代表用户访问的渠道。这两个字段是用户自定义字符串。
+
+- 请求意图识别对话
+
+```
+var reply = await chatbot.intentChat(sessionId, uid, textMessage);
+```
+
+- 获得 session 详情
+
+```
+var session = await chatbot.intentSessionDetail(sessionId)
+```
+
+在意图识别对话中，session 记录着这次会话的信息，包括用户意图、槽位参数等。
+
 ### 查看用户列表
 
 ```

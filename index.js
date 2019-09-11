@@ -1,12 +1,12 @@
 /**
  * Chatopera Node.js SDK
  */
-const debug = require('debug')('chatopera:sdk:index');
-const request = require('superagent');
-const utils = require('./lib/utils');
-const generate = require('./lib/generate-authorization');
-const basePath = '/api/v1/chatbot';
-const fs = require('fs');
+const debug = require("debug")("chatopera:sdk:index");
+const request = require("superagent");
+const utils = require("./lib/utils");
+const generate = require("./lib/generate-authorization");
+const basePath = "/api/v1/chatbot";
+const fs = require("fs");
 
 // 处理JSON返回值
 // TODO request.parse['application/json'] 有bug, 否则用它更好
@@ -50,9 +50,9 @@ class Chatbot {
    * @param {*} clientSecret
    * @param {*} host
    */
-  constructor(clientId, clientSecret, host = 'https://bot.chatopera.com') {
+  constructor(clientId, clientSecret, host = "https://bot.chatopera.com") {
     debug(
-      'constructor: host %s, clientId %s, clientSecret %s',
+      "constructor: host %s, clientId %s, clientSecret %s",
       host,
       clientId,
       clientSecret
@@ -63,13 +63,13 @@ class Chatbot {
       this.clientSecret = clientSecret;
     } else {
       // null, false, blank or undefined.
-      throw new Error('Chatbot: Unexpected clientId');
+      throw new Error("Chatbot: Unexpected clientId");
     }
     if (!!host) {
-      if (host.endsWith('/')) host = host.substr(0, host.length - 1);
+      if (host.endsWith("/")) host = host.substr(0, host.length - 1);
       this.host = host;
     } else {
-      throw new Error('Chatbot: Unexpected host');
+      throw new Error("Chatbot: Unexpected host");
     }
   }
 
@@ -80,16 +80,16 @@ class Chatbot {
     let endpoint = `${basePath}/${this.clientId}`;
     return request
       .get(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -107,16 +107,16 @@ class Chatbot {
     let endpoint = `${basePath}/${this.clientId}/faq/query`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -138,20 +138,20 @@ class Chatbot {
    * @param {*} isDebug
    */
   conversation(userId, textMessage, isDebug = false) {
-    debug('conversation userId %s, textMessage %s', userId, textMessage);
+    debug("conversation userId %s, textMessage %s", userId, textMessage);
     let endpoint = `${basePath}/${this.clientId}/conversation/query`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -173,24 +173,24 @@ class Chatbot {
    * @param {*} page
    * @param {*} sortby
    */
-  users(limit = 50, page = 1, sortby = '-lasttime') {
+  users(limit = 50, page = 1, sortby = "-lasttime") {
     let endpoint =
       basePath +
-      '/' +
+      "/" +
       this.clientId +
       `/users?page=${page}&limit=${limit}&sortby=${sortby}`;
     return request
       .get(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -210,21 +210,21 @@ class Chatbot {
   chats(userId, limit = 50, page = 1) {
     let endpoint =
       basePath +
-      '/' +
+      "/" +
       this.clientId +
       `/users/${userId}/chats?page=${page}&limit=${limit}`;
     return request
       .get(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -243,16 +243,16 @@ class Chatbot {
     let endpoint = `${basePath}/${this.clientId}/users/${userId}/mute`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -271,16 +271,16 @@ class Chatbot {
     let endpoint = `${basePath}/${this.clientId}/users/${userId}/unmute`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -299,16 +299,16 @@ class Chatbot {
     let endpoint = `${basePath}/${this.clientId}/users/${userId}/ismute`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -322,23 +322,23 @@ class Chatbot {
   deployConversation(botarchive) {
     let exist = fs.existsSync(botarchive);
     if (!exist) {
-      return reject(new Error('File not exist.'));
+      return reject(new Error("File not exist."));
     }
 
     let endpoint = `${basePath}/${this.clientId}/conversation/droplet/import`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'multipart/form-data')
-      .set('Accept', 'application/json')
-      .attach('droplet', botarchive)
+      .set("Content-Type", "multipart/form-data")
+      .set("Accept", "application/json")
+      .attach("droplet", botarchive)
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -349,19 +349,21 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
-  clauseSession(uid, channel) {
+  intentSession(uid, channel) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/session`;
+    debug("intentSession: %s", this.host + endpoint);
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -369,23 +371,24 @@ class Chatbot {
           endpoint
         )
       )
-      .send({ uid, channel })
+      .send({ uid: uid, channel: channel })
       .then(successHandler, failHandler);
   }
 
-  clauseSessionDetail(sessionId) {
+  intentSessionDetail(sessionId) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/session/${sessionId}`;
+    debug("intentSessionDetail: %s", this.host + endpoint);
     return request
       .get(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Accept', 'application/json')
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
@@ -396,20 +399,20 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
-  clauseChat(sessionId, uid, textMessage) {
+  intentChat(sessionId, uid, textMessage) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/chat`;
     return request
       .post(this.host + endpoint)
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
       .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
       )
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
       .set(
-        'Authorization',
+        "Authorization",
         generate(
           this.clientId,
           this.clientSecret,
