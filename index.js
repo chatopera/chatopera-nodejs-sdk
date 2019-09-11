@@ -373,6 +373,29 @@ class Chatbot {
       .then(successHandler, failHandler);
   }
 
+  intentSessionDetail(sessionId) {
+    let endpoint = `${basePath}/${this.clientId}/clause/prover/session/${sessionId}`;
+    return request
+      .get(this.host + endpoint)
+      .set('X-Requested-With', 'XMLHttpRequest')
+      .set('Expires', '-1')
+      .set(
+        'Cache-Control',
+        'no-cache,no-store,must-revalidate,max-age=-1,private'
+      )
+      .set('Accept', 'application/json')
+      .set(
+        'Authorization',
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.GET,
+          endpoint
+        )
+      )
+      .then(successHandler, failHandler);
+  }
+
   intentChat(sessionId, uid, textMessage) {
     let endpoint = `${basePath}/${this.clientId}/clause/prover/chat`;
     return request

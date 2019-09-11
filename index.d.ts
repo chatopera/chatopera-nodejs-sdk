@@ -167,6 +167,12 @@ declare class Chatbot {
   intentSession(uid: string, channel: string): Promise<IntentSessionResult>;
 
   /**
+   * 获取意图session详情
+   * @param sessionId 
+   */
+  intentSessionDetail(sessionId: string);
+
+  /**
    * 意图对话
    * @param sessionId
    * @param uid
