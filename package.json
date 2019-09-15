@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Official sdk of Chatopera",
   "main": "index.js",
   "bin": {
