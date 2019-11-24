@@ -103,7 +103,7 @@ class Chatbot {
   /**
    * 检索知识库
    */
-  faq(userId, textMessage) {
+  faq(userId, textMessage, faq_best_reply, faq_sugg_reply) {
     let endpoint = `${basePath}/${this.clientId}/faq/query`;
     return request
       .post(this.host + endpoint)
@@ -126,7 +126,9 @@ class Chatbot {
       )
       .send({
         fromUserId: userId,
-        query: textMessage
+        query: textMessage,
+        faq_sugg_reply: faq_sugg_reply,
+        faq_best_reply: faq_best_reply
       })
       .then(successHandler, failHandler);
   }
@@ -137,7 +139,13 @@ class Chatbot {
    * @param {*} textMessage
    * @param {*} isDebug
    */
-  conversation(userId, textMessage, isDebug = false) {
+  conversation(
+    userId,
+    textMessage,
+    faq_best_reply,
+    faq_sugg_reply,
+    isDebug = false
+  ) {
     debug("conversation userId %s, textMessage %s", userId, textMessage);
     let endpoint = `${basePath}/${this.clientId}/conversation/query`;
     return request
@@ -162,7 +170,9 @@ class Chatbot {
       .send({
         fromUserId: userId,
         textMessage: textMessage,
-        isDebug: isDebug
+        isDebug: isDebug,
+        faq_best_reply: faq_best_reply,
+        faq_sugg_reply: faq_sugg_reply
       })
       .then(successHandler, failHandler);
   }

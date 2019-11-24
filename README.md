@@ -89,8 +89,16 @@ var detail = await chatbot.detail();
 ### 进行多轮对话
 
 ```
-var reply = await chatbot.conversation("张三", "今天北京天气怎么样");
+var reply = await chatbot.conversation("张三", "今天北京天气怎么样", 0.8, 0.6);
 ```
+
+参数说明：
+| name | type | sample | description |
+| --- | --- | --- | --- |
+| userid | String | 张三 | 必填，代表该用户的唯一标识 |
+| query | String | 今天北京天气怎么样 | 必填，用户的文字消息 |
+| faq_best_reply | Number | 0.8 | 选填，最佳回复的阀值，(0,1)区间，默认值 0.8 |
+| faq_sugg_reply | Number | 0.6 | 选填，建议回复的阀值，(0, faq_best_reply) 区间，默认值 0.6 |
 
 返回值
 
@@ -114,8 +122,16 @@ var reply = await chatbot.conversation("张三", "今天北京天气怎么样");
 ### 进行 FAQ 对话
 
 ```
-var reply = await chatbot.faq("张三", "停效期间的保单是否能办理减保");
+var reply = await chatbot.faq("张三", "停效期间的保单是否能办理减保", 0.8, 0.6);
 ```
+
+参数说明：
+| name | type | sample | description |
+| --- | --- | --- | --- |
+| userid | String | 张三 | 必填，代表该用户的唯一标识 |
+| query | String | 停效期间的保单是否能办理减保 | 必填，用户的文字消息 |
+| faq_best_reply | Number | 0.8 | 选填，最佳回复的阀值，(0,1)区间，默认值 0.8 |
+| faq_sugg_reply | Number | 0.6 | 选填，建议回复的阀值，(0, faq_best_reply) 区间，默认值 0.6 |
 
 返回值
 
@@ -131,7 +147,9 @@ var reply = await chatbot.faq("张三", "停效期间的保单是否能办理减
 ]
 ```
 
-说明：返回值为数组，*id*代表问答对 ID，*score*是相似度分数，*reply*是回复。在含有多个元素时按*score*降序排列，*score*的分数在[0,1]之间，越接近 1 越相似。
+说明：返回值为数组，*id*代表问答对 ID，*score*是相似度分数，*reply*是回复。
+
+在含有多个元素时按*score*降序排列，*score*的分数在[0,1]之间，越接近 1 越相似。
 
 ### 进行意图识别对话
 
