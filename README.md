@@ -256,6 +256,70 @@ let result = await chatbot.ismute("张三");
 
 关于各接口返回值的更多描述参考[开发者平台文档](https://docs.chatopera.com/chatbot-platform.html)。
 
+## 技能接口
+
+技能是 Chatopera 云服务中，预置的机器人的对话能力，不需要用户管理知识库、脚本等，开箱即用。每项技能是单独的接口。
+
+### 心理咨询
+
+心理咨询服务是 Chatopera 云服务中专门为心理咨询平台和心理咨询师等行业用户，打造的面向心理健康、心理支持的对话服务。此处，仅介绍 API 接口，详细介绍参考文档 [https://docs.chatopera.com/products/psych-assistant/index.html](https://docs.chatopera.com/products/psych-assistant/index.html)
+
+#### 聊天接口
+
+```
+chatbot.psychChat(channel, channelId, userId, textMessage)
+```
+
+实现多轮对话。
+
+```
+  const chatbot = new Chatbot(clientId, clientSecret);
+  let channel = "test";
+  let channelId = "nodejs";
+  let userId = "uid001";
+  let textMessage = "确定自己是否有抑郁倾向，想要知道自己当下该怎么办";
+  let resp = await chatbot.psychChat(channel, channelId, userId, textMessage);
+  debug("resp: %s", JSON.stringify(resp, null, " "));
+```
+
+参数说明：
+| name | type | sample | description |
+| --- | --- | --- | --- |
+| channel | string | "test" | 用户自定义渠道，使用字母和数字，字母开头 |
+| channelId | string | "nodejs" | 用户自定义渠道标识，使用字母和数字，字母开头 |
+| userId | string | "uid001" | 访问者唯一标识，使用字母和数字，字母开头 |
+| textMessage | string | "你好" | 对话文本内容 |
+
+返回值：
+`Promise`
+
+#### 查询接口
+
+```
+chatbot.psychSearch(query [,threshold])
+```
+
+查询知识库。
+
+```
+  const chatbot = new Chatbot(clientId, clientSecret);
+  let query = "确定自己是否有抑郁倾向，想要知道自己当下该怎么办";
+  let threshold = 0.2;
+  let resp = await chatbot.psychSearch(query, threshold);
+  debug("resp: %s", JSON.stringify(resp, null, " "));
+```
+
+参数说明：
+| name | type | sample | description |
+| --- | --- | --- | --- |
+| query | string | "确定自己是否有抑郁倾向，想要知道自己当下该怎么办" | 查询条件 |
+| threshold | float | 0.2 | 匹配度，可适当调整，默认 0.2 |
+
+返回值：
+`Promise`
+
+关于返回值具体内容，详细介绍，参考[https://docs.chatopera.com/products/psych-assistant/index.html](https://docs.chatopera.com/products/psych-assistant/index.html)。
+
 ## CLI 使用方法
 
 Chatopera Node.js SDK 包括一些常用的命令，辅助开发者实现对话机器人。
@@ -342,6 +406,8 @@ bot --help
 
 ```
 export DEBUG=chatopera*
+cp sample.env .env # edit .env
+npm run test
 ```
 
 ## license

@@ -128,7 +128,7 @@ class Chatbot {
         fromUserId: userId,
         query: textMessage,
         faq_sugg_reply: faq_sugg_reply,
-        faq_best_reply: faq_best_reply
+        faq_best_reply: faq_best_reply,
       })
       .then(successHandler, failHandler);
   }
@@ -172,7 +172,7 @@ class Chatbot {
         textMessage: textMessage,
         isDebug: isDebug,
         faq_best_reply: faq_best_reply,
-        faq_sugg_reply: faq_sugg_reply
+        faq_sugg_reply: faq_sugg_reply,
       })
       .then(successHandler, failHandler);
   }
@@ -434,8 +434,78 @@ class Chatbot {
         fromUserId: uid,
         session: { id: sessionId },
         message: {
-          textMessage
-        }
+          textMessage,
+        },
+      })
+      .then(successHandler, failHandler);
+  }
+
+  /**
+   * Skills: 心理咨询聊天
+   * @param {*} channel
+   * @param {*} channelId
+   * @param {*} userId
+   * @param {*} textMessage
+   */
+  psychChat(channel, channelId, userId, textMessage) {
+    let endpoint = `${basePath}/${this.clientId}/skills/psych/chat`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
+        )
+      )
+      .send({
+        channel: channel,
+        channelId: channelId,
+        userId: userId,
+        textMessage: textMessage,
+      })
+      .then(successHandler, failHandler);
+  }
+
+  /**
+   * Skills: 心理咨询查询
+   * @param {*} query
+   * @param {*} threshold
+   */
+  psychSearch(query, threshold) {
+    let endpoint = `${basePath}/${this.clientId}/skills/psych/search`;
+    return request
+      .post(this.host + endpoint)
+      .set("X-Requested-With", "XMLHttpRequest")
+      .set("Expires", "-1")
+      .set(
+        "Cache-Control",
+        "no-cache,no-store,must-revalidate,max-age=-1,private"
+      )
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json")
+      .set(
+        "Authorization",
+        generate(
+          this.clientId,
+          this.clientSecret,
+          utils.HTTP_METHOD.POST,
+          endpoint
+        )
+      )
+      .send({
+        query: query,
+        threshold: threshold || 0.2,
       })
       .then(successHandler, failHandler);
   }

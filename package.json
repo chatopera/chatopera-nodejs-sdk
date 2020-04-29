@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Official sdk of Chatopera",
   "main": "index.js",
   "bin": {
@@ -29,7 +29,8 @@
     "superagent": "^5.0.5"
   },
   "devDependencies": {
-    "ava": "^0.25.0"
+    "ava": "^0.25.0",
+    "dotenv": "^8.2.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

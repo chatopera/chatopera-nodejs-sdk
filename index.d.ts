@@ -84,7 +84,7 @@ declare class Chatbot {
   constructor(
     clientId: string,
     clientSecret: string,
-    host: string = 'https://bot.chatopera.com'
+    host: string = "https://bot.chatopera.com"
   );
 
   /**
@@ -120,7 +120,7 @@ declare class Chatbot {
   users(
     limit: number = 50,
     page: number = 1,
-    sortby: string = '-lasttime'
+    sortby: string = "-lasttime"
   ): Promise<UserResult[]>;
 
   /**
@@ -183,6 +183,27 @@ declare class Chatbot {
     uid: string,
     textMessage: string
   ): Promise<IntentChatResult>;
+
+  /**
+   * 技能：心理咨询查询
+   * @param query
+   * @param threshold
+   */
+  psychSearch(query: string, threshold: number): Promise<any>;
+
+  /**
+   * 技能：心理咨询对话
+   * @param channel
+   * @param channelId
+   * @param userId
+   * @param textMessage
+   */
+  psychChat(
+    channel: string,
+    channelId: string,
+    userId: string,
+    textMessage: string
+  ): Promise<any>;
 }
 
 export = Chatbot;
