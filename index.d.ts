@@ -1,83 +1,9 @@
-declare interface DetailResult {
-  name: string;
-  fallback: string;
-  description: string;
-  welcome: string;
-  primaryLanguage: string;
-}
-
-declare interface FAQResult {
-  id: string;
-  score: number;
-  post: string;
-  reply: string;
-}
-
-declare interface ConversationService {
-  provider: string;
-}
-
-declare interface ConversationResult {
-  state: string;
-  createdAt: number;
-  string: string;
-  topicName: string;
-  subReplies: string[];
-  service: ConversationService;
-  logic_is_fallback: boolean;
-  logic_is_unexpected: boolean;
-  botName: string;
-  faq: FAQResult[];
-}
-
-declare interface UserResult {
-  userId: string;
-  lasttime: string;
-  created: string;
-}
-
-declare interface ChatResult {
-  userId: string;
-  textMessage: string;
-  direction: string;
-  service: string;
-  created: string;
-}
-
-declare interface IsMuteResult {
-  mute: boolean;
-}
-declare interface DeployConversationResult {
+declare interface ResponseResult {
+  rc: number;
+  data: any;
+  error: string;
   msg: string;
-}
-
-declare interface IntentSlot {
-  dictname: string;
-  name: string;
-  requires: boolean;
-  val: string;
-}
-
-declare interface IntentSessionResult {
-  channel: string;
-  createdate: string;
-  id: string;
-  entities: IntentSlot[];
-  intent_name: string;
-  resolved: boolean;
-  uid: string;
-}
-
-declare interface IntentMessage {
-  receiver: string;
-  is_proactive: boolean;
-  is_fallback: boolean;
-  textMessage: string;
-}
-
-declare interface IntentChatResult {
-  message: IntentMessage;
-  session: IntentSessionResult;
+  status: any;
 }
 
 declare class Chatbot {
@@ -88,16 +14,21 @@ declare class Chatbot {
   );
 
   /**
+   * 核心封装
+   */
+  command(method: string, path: string, payload: any): Promise<ResponseResult>;
+
+  /**
    * 获得详情
    */
-  detail(): Promise<DetailResult>;
+  detail(): Promise<ResponseResult>;
 
   /**
    * 检索知识库
    * @param userId
    * @param textMessage
    */
-  faq(userId: string, textMessage: string): Promise<FAQResult[]>;
+  faq(userId: string, textMessage: string): Promise<ResponseResult>;
 
   /**
    * 查询多轮对话
@@ -109,7 +40,7 @@ declare class Chatbot {
     serId: string,
     textMessage: string,
     isDebug: boolean = false
-  ): Promise<ConversationResult>;
+  ): Promise<ResponseResult>;
 
   /**
    * 查询用户列表
@@ -121,7 +52,7 @@ declare class Chatbot {
     limit: number = 50,
     page: number = 1,
     sortby: string = "-lasttime"
-  ): Promise<UserResult[]>;
+  ): Promise<ResponseResult>;
 
   /**
    * 获得聊天历史记录
@@ -133,44 +64,44 @@ declare class Chatbot {
     userId: string,
     limit: number = 50,
     page: number = 1
-  ): Promise<ChatResult[]>;
+  ): Promise<ResponseResult>;
 
   /**
    * 屏蔽一个聊天者
    * @param userId
    */
-  mute(userId: string): Promise<void>;
+  mute(userId: string): Promise<ResponseResult>;
 
   /**
    * 取消屏蔽一个聊天者
    * @param userId
    */
-  unmute(userId: string): Promise<void>;
+  unmute(userId: string): Promise<ResponseResult>;
 
   /**
    * 获取聊天者屏蔽状态
    * @param userId
    */
-  ismute(userId: string): Promise<IsMuteResult>;
+  ismute(userId: string): Promise<ResponseResult>;
 
   /**
    * 导入对话应用
    * @param botarchive 文件路径
    */
-  deployConversation(botarchive: string): Promise<DeployConversationResult>;
+  deployConversation(botarchive: string): Promise<ResponseResult>;
 
   /**
    * 创建意图session
    * @param uid
    * @param channel
    */
-  intentSession(uid: string, channel: string): Promise<IntentSessionResult>;
+  intentSession(uid: string, channel: string): Promise<ResponseResult>;
 
   /**
    * 获取意图session详情
    * @param sessionId
    */
-  intentSessionDetail(sessionId: string): Promise<IntentSessionResult>;
+  intentSessionDetail(sessionId: string): Promise<ResponseResult>;
 
   /**
    * 意图对话
@@ -189,7 +120,7 @@ declare class Chatbot {
    * @param query
    * @param threshold
    */
-  psychSearch(query: string, threshold: number): Promise<any>;
+  psychSearch(query: string, threshold: number): Promise<ResponseResult>;
 
   /**
    * 技能：心理咨询对话
@@ -203,7 +134,7 @@ declare class Chatbot {
     channelId: string,
     userId: string,
     textMessage: string
-  ): Promise<any>;
+  ): Promise<ResponseResult>;
 }
 
-export = Chatbot;
+export = { Chatbot };

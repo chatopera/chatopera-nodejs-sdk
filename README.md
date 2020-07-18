@@ -20,7 +20,7 @@ npm install @chatopera/sdk --save
 ## SDK 使用方法
 
 ```
-var Chatbot = require("@chatopera/sdk");
+var Chatbot = require("@chatopera/sdk").Chatbot;
 
 var chatbot = new Chatbot(*ClientId*, *Secret* [, ServiceProvider]);
 
@@ -60,10 +60,20 @@ var chatbot = new Chatbot(*ClientId*, *Secret* [, ServiceProvider]);
 3. 下面各接口的返回值，按正常情况下介绍。
 ```
 
+### 高级封装接口
+
+`command`接口是实例化一个 Chatbot 对象后，最核心的调用 Chatbot 各种服务的接口。
+
+```
+var resp = await chatbot.command(METHOD, PATH, PAYLOAD);
+```
+
+其中，`METHOD` 是调用 HTTPRequest 时的 method, 有效值包含 `POST, PUT, DELETE, HEAD, GET`；`PATH` 是 HTTPRequest 中的 URL path 参数，PAYLOAD 是 JSONArray 或 JSONObject 作为 HTTPRequest 的 Body。
+
 ### 获得聊天机器人实例
 
 ```
-var Chatbot = require("@chatopera/sdk");
+var Chatbot = require("@chatopera/sdk").Chatbot;
 var chatbot = new Chatbot(*ClientId*, *Secret*);
 
 ```
@@ -78,11 +88,14 @@ var detail = await chatbot.detail();
 
 ```
 {
-  "name": "bar",
-  "fallback": "我不明白您的意思。",
-  "description": "",
-  "welcome": "你好！我是机器人客服。",
-  "primaryLanguage": "zh_CN"
+    "rc": 0,
+    "data": {
+        "name": "bar",
+        "fallback": "我不明白您的意思。",
+        "description": "",
+        "welcome": "你好！我是机器人客服。",
+        "primaryLanguage": "zh_CN"
+    }
 }
 ```
 
@@ -104,16 +117,19 @@ var reply = await chatbot.conversation("张三", "今天北京天气怎么样", 
 
 ```
 {
-  "state": "default",
-  "createdAt": 1540796868205,
-  "string": "白天天气晴好，早晚会感觉偏凉，午后舒适、宜人。",
-  "topicName": "weather",
-  "subReplies": [],
-  "service": {
-    "provider": "conversation"
-  },
-  "logic_is_fallback": false,
-  "botName": "bar"
+    "rc": 0,
+    "data": {
+        "state": "default",
+        "createdAt": 1540796868205,
+        "string": "白天天气晴好，早晚会感觉偏凉，午后舒适、宜人。",
+        "topicName": "weather",
+        "subReplies": [],
+        "service": {
+            "provider": "conversation"
+        },
+        "logic_is_fallback": false,
+        "botName": "bar"
+    }
 }
 ```
 
@@ -136,15 +152,18 @@ var reply = await chatbot.faq("张三", "停效期间的保单是否能办理减
 返回值
 
 ```
-[
-  {
-    "id": "AWa-Ogcaf3EIFA_CgZ3o",
-    "score": 0.747,
-    "post": " 停效期间的保单是否能办理减保？",
-    "reply": " 停效期间的保单可以办理减保"
-  },
-  ...
-]
+{
+    "rc": 0,
+    "data": [
+        {
+            "id": "AWa-Ogcaf3EIFA_CgZ3o",
+            "score": 0.747,
+            "post": " 停效期间的保单是否能办理减保？",
+            "replies": {"rtype": "plain", "content": " 停效期间的保单可以办理减保""}
+        },
+        ...
+    ]
+}
 ```
 
 说明：返回值为数组，*id*代表问答对 ID，*score*是相似度分数，*reply*是回复。
@@ -185,14 +204,17 @@ let users = await chatbot.users();
 返回值
 
 ```
-[
-  {
-    "userId": "张三",
-    "lasttime": "2018-10-29T07:07:47.812Z",
-    "created": "2018-10-29T05:02:13.084Z"
-  },
-  ...
-]
+{
+    "rc": 0,
+    "data": [
+        {
+            "userId": "张三",
+            "lasttime": "2018-10-29T07:07:47.812Z",
+            "created": "2018-10-29T05:02:13.084Z"
+        },
+        ...
+    ]
+}
 ```
 
 说明: 按最后对话时间将序排列。
@@ -206,16 +228,19 @@ let chats = await chatbot.chats("张三");
 返回值
 
 ```
-[
-  {
-    "userId": "张三",
-    "created": "2018-10-29T05:29:41.833Z",
-    "textMessage": "白天天气晴好，早晚会感觉偏凉，午后舒适、宜人。",
-    "direction": "outbound",
-    "service": "conversation",
-    "confidence": 1
-  }
-]
+{
+    "rc": 0,
+    "data": [
+        {
+            "userId": "张三",
+            "created": "2018-10-29T05:29:41.833Z",
+            "textMessage": "白天天气晴好，早晚会感觉偏凉，午后舒适、宜人。",
+            "direction": "outbound",
+            "service": "conversation",
+            "confidence": 1
+        }
+    ]
+}
 ```
 
 说明：按照每条消息的生成时间升序排列。
@@ -228,7 +253,13 @@ let chats = await chatbot.chats("张三");
 await chatbot.mute("张三");
 ```
 
-返回值为空
+返回值为 JSONObject
+
+```
+{"rc":0,"data":{}}
+```
+
+`rc` 等于 0 代表接口调用成功。
 
 ### 取消屏蔽
 
@@ -238,7 +269,13 @@ await chatbot.mute("张三");
 await chatbot.ummute("张三");
 ```
 
-返回值为空
+返回值为 JSONObject
+
+```
+{"rc":0,"data":{}}
+```
+
+`rc` 等于 0 代表接口调用成功。
 
 ### 查看用户是否被屏蔽
 
@@ -248,10 +285,10 @@ await chatbot.ummute("张三");
 let result = await chatbot.ismute("张三");
 ```
 
-返回值为 Boolean
+返回值为 JSONObject
 
 ```
-[true|false]
+{"rc":0,"data":{"mute":false}}
 ```
 
 关于各接口返回值的更多描述参考[开发者平台文档](https://docs.chatopera.com/chatbot-platform.html)。

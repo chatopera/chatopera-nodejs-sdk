@@ -1,7 +1,7 @@
 {
   "name": "@chatopera/sdk",
-  "version": "1.10.0",
-  "description": "Official sdk of Chatopera",
+  "version": "2.0.0",
+  "description": "Official sdk of Chatopera services, https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
     "bot": "bin/bot.js"
@@ -15,21 +15,22 @@
     "chatbot",
     "question-and-answering"
   ],
-  "author": "Chatopera <http://chatopera.com>",
-  "license": "Apache 2.0",
+  "author": "Chatopera <info@chatopera.com>",
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/chatopera/conversation-sampleapp/issues"
   },
-  "homepage": "https://docs.chatopera.com/",
+  "homepage": "https://bot.chatopera.com/",
   "dependencies": {
-    "archiver": "^3.0.0",
-    "commander": "^2.20.0",
+    "@chatopera/q": "^1.0.1",
+    "archiver": "^4.0.2",
+    "commander": "^5.1.0",
     "debug": "^4.1.1",
-    "inquirer": "^6.3.1",
-    "superagent": "^5.0.5"
+    "inquirer": "^7.3.2",
+    "superagent": "^5.3.1"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^3.10.1",
     "dotenv": "^8.2.0"
   },
   "publishConfig": {
