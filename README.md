@@ -19,15 +19,23 @@ npm install @chatopera/sdk --save
 
 ## 使用文档
 
-[文档中心](https://docs.chatopera.com/products/chatbot-platform/integration.html)
+快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration.html)：
+
+[https://docs.chatopera.com/products/chatbot-platform/integration.html](https://docs.chatopera.com/products/chatbot-platform/integration.html)
 
 ## 命令行工具
 
 Chatopera Node.js SDK 包括一些常用的命令，辅助开发者实现对话机器人。
 
-CLI 使用方法：
+### 获得帮助
 
-### connect
+打印可用命令。
+
+```
+bot --help
+```
+
+### 连接聊天机器人
 
 在命令行终端连接 Bot 并进行对话。
 
@@ -42,17 +50,17 @@ Options:
   -h, --help                  output usage information
 ```
 
-其中，`Client ID`和`Client Secret`来自于平台，在独立使用智能问答引擎时，可以省略`Client Secret`。`username`代表用户名，是一个不含空格或特殊符号的字符串，每个用户的唯一标识，`provider`是智能问答引擎地址，默认为 [Chatopera 机器人平台](https://bot.chatopera.com/)。
+其中，`clientid`和`clientsecret`从每个机器人的设置页面获取，`username`代表用户名，是一个不含空格或特殊符号的字符串，每个用户的唯一标识，`provider`是[Chatopera 机器人平台](https://docs.chatopera.com/products/chatbot-platform/index.html)地址，默认为 [Chatopera 云服务](https://bot.chatopera.com/)。
 
 示例：
 
 ```
-bot connect -c 5cd29bf7xxx -s 0d8e43cc4de22e9e2cb89f69xxx -u zhangsan
+bot connect -c xxx -s xxx -u zhangsan
 ```
 
-### deploy
+### 上传多轮对话脚本
 
-在命令行终端发布 botarchive 文件到多轮对话中。
+在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation.html)中。
 
 ```
 Usage: deploy [options]
@@ -65,7 +73,7 @@ Options:
   -h, --help                  output usage information
 ```
 
-其中`botarchive`为机器人的文件目录和`xx.c66`文件，支持*相对路径*或*绝对路径*。
+其中 `botarchive` 为机器人的文件目录和`xx.c66`文件，支持*相对路径*或*绝对路径*。
 
 标准目录结构:
 
@@ -95,13 +103,7 @@ botarchive
 }
 ```
 
-`plugin.js`是`函数`，参考[说明文档](https://docs.chatopera.com/conversation-designer.html)。
-
-### 获得帮助
-
-```
-bot --help
-```
+`plugin.js`是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
 
 ## Contribute
 
