@@ -5,8 +5,6 @@
 
 # constants
 baseDir=$(cd `dirname "$0"`;pwd)
-export PYTHONUNBUFFERED=1
-export PATH=/opt/miniconda3/envs/venv-py3/bin:$PATH
 
 # functions
 
