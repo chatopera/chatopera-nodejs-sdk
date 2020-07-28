@@ -2,7 +2,7 @@
 
 const program = require("commander");
 const inquirer = require("inquirer");
-const Bot = require("../index.js");
+const Bot = require("../index.js").Chatbot;
 const tempdir = require("../lib/tempdir");
 const path = require("path");
 const fs = require("fs");
@@ -24,10 +24,56 @@ program
     "-p, --provider [value]",
     "Chatopera Superbrain Instance URL, optional, default https://bot.chatopera.com"
   )
-  .action(cmd => {
+  .option(
+    "-fb, --faq-best [value]",
+    "FAQ best reply threshold, optional, default 0.8"
+  )
+  .option(
+    "-fs, --faq-sugg [value]",
+    "FAQ suggest reply threshold, optional, default 0.6"
+  )
+  .action((cmd) => {
     debug("connect cmd %o", cmd);
 
-    let { provider, username, clientid, clientsecret } = cmd;
+    let { provider, username, clientid, clientsecret, faqBest, faqSugg } = cmd;
+
+    try {
+      faqBest = Number(faqBest);
+      faqSugg = Number(faqSugg);
+
+      if (faqBest == 0) {
+        throw new Error(
+          "WARN: faqBest must larger then 0, use default value instead."
+        );
+      }
+    } catch (e) {
+      console.log("Invalid --faq-best, --faq-sugg value", e);
+    }
+
+    if (!faqBest) {
+      faqBest = 0.8;
+    }
+
+    if (!faqSugg) {
+      faqSugg = 0.6;
+    }
+
+    try {
+      if (faqBest > 1 || faqBest <= 0) {
+        throw new Error("--faq-best should range in [0,1]");
+      }
+
+      if (faqSugg > 1 || faqSugg <= 0) {
+        throw new Error("--faq-sugg should range in [0,1]");
+      }
+
+      if (faqBest <= faqSugg) {
+        throw new Error("faq-best must larger then faq-sugg");
+      }
+    } catch (e) {
+      console.log("Invalid --faq-best, --faq-sugg value", e);
+      process.exit(1);
+    }
 
     if (!!provider) {
       console.log(">> connect to " + provider + " ...");
@@ -36,11 +82,17 @@ program
     }
 
     debug(
-      "connect clientId %s, userName %s, secret %s, provider %s",
+      "[connect] clientId %s, userName %s, secret %s, provider %s",
       clientid,
       username,
       clientsecret,
       provider
+    );
+
+    console.log(
+      "[connect] FAQ Best Reply Threshold %s, Suggest Reply Threshold %s",
+      faqBest,
+      faqSugg
     );
 
     if (clientid && username) {
@@ -54,12 +106,20 @@ program
       let prompt = () => {
         inquirer
           .prompt({ name: "send", message: "Text" })
-          .then(function(answers) {
+          .then(function (answers) {
             client
-              .conversation(username, answers.send)
-              .then(res => {
-                console.log(res);
-                console.log("Bot:", res.string);
+              .command("POST", "/conversation/query", {
+                fromUserId: username,
+                textMessage: answers.send,
+                isDebug: false,
+                faqBestReplyThreshold: faqBest,
+                faqSuggReplyThreshold: faqSugg,
+              })
+              .then((res) => {
+                console.log(JSON.stringify(res, null, " "));
+                if (res && res.rc === 0) {
+                  console.log("Bot:", res.data.string);
+                }
               })
               .catch(console.error)
               .then(() => {
@@ -91,7 +151,7 @@ program
     "-p, --provider [value]",
     "Chatopera Superbrain Instance URL, optional, default https://bot.chatopera.com"
   )
-  .action(async cmd => {
+  .action(async (cmd) => {
     let { provider, clientid, botarchive, clientsecret } = cmd;
 
     if (!!provider) {
@@ -137,11 +197,11 @@ program
     }
     // submit file
     let result = await client.deployConversation(tempc66);
-    debug("deploy: result %o", result);
+    console.log("deploy: response %o", result);
 
     if (isRemoveC66) {
       // remove temp file
-      fs.unlink(tempc66, err => {
+      fs.unlink(tempc66, (err) => {
         if (err) {
           console.error(err);
           return;

@@ -305,33 +305,25 @@ Chatbot.prototype.ismute = function (userId) {
 };
 
 Chatbot.prototype.deployConversation = function (botarchive) {
-  let self = this;
-  let fn = deprecate(
-    () => {
-      let exist = fs.existsSync(botarchive);
-      if (!exist) {
-        throw new Error("File not exist.");
-      }
+  let exist = fs.existsSync(botarchive);
+  if (!exist) {
+    throw new Error("File not exist.");
+  }
 
-      return self.command(
-        "POST",
-        "/conversation/droplet/import",
-        null,
-        {
-          "Content-Type": "multipart/form-data",
-        },
-        [
-          {
-            filename: "droplet",
-            filepart: botarchive,
-          },
-        ]
-      );
+  return this.command(
+    "POST",
+    "/conversation/droplet/import",
+    null,
+    {
+      "Content-Type": "multipart/form-data",
     },
-    "use `Chatbot#command` API instead, removed in 2020-10",
-    depCode("deployConversation", "2020-07-18")
+    [
+      {
+        filename: "droplet",
+        filepart: botarchive,
+      },
+    ]
   );
-  return fn();
 };
 
 Chatbot.prototype.intentSession = function (uid, channel) {
