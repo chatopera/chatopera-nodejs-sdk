@@ -58,6 +58,14 @@ Options:
 bot connect -c xxx -s xxx -u zhangsan
 ```
 
+在对话中，可以使用快捷方式，快速输入。
+
+| 快捷方式                                 | Mac OSX / Windows                              |
+| ---------------------------------------- | ---------------------------------------------- |
+| 回溯历史                                 | ↑ 上箭头；↓ 下箭头                             |
+| 打印历史                                 | Shift + → 右箭头                               |
+| 使用索引输入历史，索引根据*打印历史*获得 | 输入索引，然后 Ctrl + Shift + Shift + → 右箭头 |
+
 ### 上传多轮对话脚本
 
 在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation.html)中。

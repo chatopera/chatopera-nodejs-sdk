@@ -113,10 +113,34 @@ program
       } else {
         client = new Bot(clientid, clientsecret);
       }
+      const inquirerCommandPrompt = require("inquirer-command-prompt");
+      const path = require("path");
+
+      // 历史查询，加快输入
+      // https://github.com/sullof/inquirer-command-prompt
+      const homedir = require("os").homedir();
+      const historyFolder = path.join(homedir, ".cache", "chatopera", "sdk");
+      inquirerCommandPrompt.setConfig({
+        history: {
+          save: true,
+          folder: historyFolder,
+          limit: 20,
+          blacklist: ["exit"],
+        },
+      });
+
+      inquirer.registerPrompt("command", inquirerCommandPrompt);
 
       let prompt = () => {
         inquirer
-          .prompt({ name: "send", message: "Text" })
+          .prompt({
+            type: "command",
+            name: "send",
+            message: "Text",
+            autoCompletion: ["__kickoff", "__faq_hot_list"],
+            context: 0,
+            short: false,
+          })
           .then(function (answers) {
             client
               .command("POST", "/conversation/query", {
