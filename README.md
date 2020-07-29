@@ -105,6 +105,21 @@ botarchive
 
 `plugin.js`是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
 
+### 打印聊天机器人日志
+
+方便调试多轮对话脚本，实时跟踪服务器端日志，排查问题。
+
+```
+Usage: bot trace [options]
+
+Options:
+  -c, --clientid <value>      ClientId of the bot, *required.
+  -s, --clientsecret [value]  Client Secret of the bot, optional, default null
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
+  -l, --log-level [value]     Log level to follow, optional, [DEBUG|INFO|WARN|ERROR], default DEBUG
+  -h, --help                  display help for command
+```
+
 ## Contribute
 
 打印调试日志

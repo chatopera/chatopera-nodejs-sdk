@@ -95,11 +95,15 @@ Chatbot.prototype.command = function (method, path, payload, headers, attach) {
     .set(
       "Accept",
       headers && headers["Accept"] ? headers["Accept"] : "application/json"
-    )
-    .set(
+    );
+
+  if (this.clientSecret) {
+    console.log("this.clientSecret", this.clientSecret);
+    req.set(
       "Authorization",
       generate(this.clientId, this.clientSecret, method, endpoint)
     );
+  }
 
   if (attach && attach instanceof Array) {
     for (let x of attach) {
