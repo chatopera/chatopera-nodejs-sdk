@@ -98,7 +98,6 @@ Chatbot.prototype.command = function (method, path, payload, headers, attach) {
     );
 
   if (this.clientSecret) {
-    console.log("this.clientSecret", this.clientSecret);
     req.set(
       "Authorization",
       generate(this.clientId, this.clientSecret, method, endpoint)

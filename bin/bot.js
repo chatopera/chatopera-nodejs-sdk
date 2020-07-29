@@ -286,6 +286,11 @@ function traceLoop(client, logLevel, afterDate) {
           resolve({
             afterDate,
           });
+        } else {
+          // 没有得到数据
+          resolve({
+            afterDate,
+          });
         }
       })
       .catch((err) => {
