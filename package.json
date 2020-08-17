@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Deliver chatbot for Enterprises, https://bot.chatopera.com",
   "main": "index.js",
   "bin": {

@@ -261,6 +261,7 @@ function traceLoop(client, logLevel, afterDate) {
     client
       .command("POST", "/conversation/trace", {
         logLevel: logLevel,
+        afterDate: afterDate,
       })
       .then((res) => {
         if (res.rc === 0 && res.data && res.data.length > 0) {
