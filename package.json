@@ -1,10 +1,10 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.2.3",
+  "version": "2.5.0",
   "description": "Deliver chatbot for Enterprises, https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
-    "bot": "bin/bot.js"
+    "bot": "bin/cli.js"
   },
   "scripts": {
     "test": "DEBUG=chatopera* NODE_ENV=development ava",
@@ -32,6 +32,7 @@
     "superagent": "^5.3.1"
   },
   "devDependencies": {
+    "@chatopera/wavefile": "^11.0.2",
     "ava": "^3.10.1",
     "dotenv": "^8.2.0"
   },

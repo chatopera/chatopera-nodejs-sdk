@@ -11,4 +11,4 @@ baseDir=$(cd `dirname "$0"`;pwd)
 # main 
 [ -z "${BASH_SOURCE[0]}" -o "${BASH_SOURCE[0]}" = "$0" ] || return
 cd $baseDir/..
-NODE_ENV=development DEBUG=chatopera* ./node_modules/ava/cli.js --timeout 30s $*
+NODE_ENV=development DEBUG=chatopera:* ./node_modules/ava/cli.js --timeout 30s $*

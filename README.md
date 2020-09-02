@@ -128,6 +128,32 @@ Options:
   -h, --help                  display help for command
 ```
 
+### 语音识别
+
+```
+Usage: bot asr [options]
+
+Options:
+  -c, --clientid <value>      ClientId of the bot, *required.
+  -u, --username <value>      Username to chat with bot, *required.
+  -s, --clientsecret [value]  Client Secret of the bot, optional, default null
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
+  -f, --file <value>          Target file to recognize, *required.
+  -t, --pos [value]           return in tokenzied form or not for result, optional, default false
+  -n, --nbest [value]         return how many topN results, optional, default 3
+  -h, --help                  display help for command
+```
+
+示例：
+
+```
+./bin/cli.js asr -c 5f408af58e0190001bddcexx \
+     -u test \
+     -s 6413a78966d7537f6a66e76583b50xx \
+     -p https://bot.chatopera.com \
+     -f ./test/fixtures/001.wav
+```
+
 ## Contribute
 
 打印调试日志
