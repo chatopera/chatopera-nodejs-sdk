@@ -20,26 +20,10 @@ exports = module.exports = (program) => {
       "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .option("-f, --file <value>", "Target file to recognize, *required.")
-    .option(
-      "-t, --pos [value]",
-      "return in tokenzied form or not for result, optional, default false"
-    )
-    .option(
-      "-n, --nbest [value]",
-      "return how many topN results, optional, default 3"
-    )
     .action(async (cmd) => {
       debug("asr cmd %o", cmd);
 
-      let {
-        provider,
-        username,
-        clientid,
-        clientsecret,
-        pos,
-        nbest,
-        file,
-      } = cmd;
+      let { provider, username, clientid, clientsecret, file } = cmd;
 
       if (typeof clientsecret === "boolean") {
         clientsecret = null;
@@ -49,21 +33,8 @@ exports = module.exports = (program) => {
         provider = null;
       }
 
-      if (pos) {
-        pos = true;
-      } else {
-        pos = false;
-      }
-
-      try {
-        nbest = Number(nbest);
-      } catch (e) {
-        nbest = N_BEST_DEFAULT;
-      }
-
-      if (nbest <= 0 || isNaN(nbest)) {
-        nbest = N_BEST_DEFAULT;
-      }
+      let pos = true;
+      let nbest = N_BEST_DEFAULT;
 
       if (!!provider) {
         console.log(">> connect to " + provider + " ...");
@@ -90,8 +61,8 @@ exports = module.exports = (program) => {
 
         let resp = await client.command("POST", "/asr/recognize", {
           filepath: file, // 语音文件位置，必填
-          nbest: 3, // 取得最佳识别结果 topN, 默认 5
-          pos: false, // 返回结果是否分词，默认 false
+          nbest: nbest, // 取得最佳识别结果 topN, 默认 5
+          pos: pos, // 返回结果是否分词，默认 false
           fromUserId: username, // 记录发送语音的用户唯一标识 ID，可选，默认 无
         });
 

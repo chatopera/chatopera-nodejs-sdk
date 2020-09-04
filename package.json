@@ -1,10 +1,10 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Deliver chatbot for Enterprises, https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
-    "bot": "bin/cli.js"
+    "bot": "bin/bot.js"
   },
   "scripts": {
     "test": "DEBUG=chatopera* NODE_ENV=development ava",

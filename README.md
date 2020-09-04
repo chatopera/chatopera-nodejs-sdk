@@ -139,18 +139,15 @@ Options:
   -s, --clientsecret [value]  Client Secret of the bot, optional, default null
   -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
   -f, --file <value>          Target file to recognize, *required.
-  -t, --pos [value]           return in tokenzied form or not for result, optional, default false
-  -n, --nbest [value]         return how many topN results, optional, default 3
   -h, --help                  display help for command
 ```
 
 示例：
 
 ```
-./bin/cli.js asr -c 5f408af58e0190001bddcexx \
-     -u test \
-     -s 6413a78966d7537f6a66e76583b50xx \
-     -p https://bot.chatopera.com \
+bot asr -c xxx \
+     -s xxxx \
+     -u nodetest \
      -f ./test/fixtures/001.wav
 ```
 
