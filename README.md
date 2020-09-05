@@ -113,7 +113,7 @@ Options:
   -h, --help                  display help for command
 ```
 
-其中 `botarchive` 为机器人的文件目录和`xx.c66`文件，支持*相对路径*或*绝对路径*。
+其中 `botarchive` 为**机器人的话题文件目录**或 `xx.c66` 文件，支持*相对路径*或*绝对路径*。
 
 标准目录结构:
 
@@ -183,6 +183,26 @@ bot asr -c xxx \
      -s xxxx \
      -u nodetest \
      -f ./test/fixtures/001.wav
+{
+ "rc": 0,
+ "data": {
+  "duration": 6250,
+  "predicts": [
+   {
+    "confidence": 0.960783,
+    "text": "上海 浦东机场 入境 房 输入 全 闭 环 管理"
+   },
+   {
+    "confidence": 0.960767,
+    "text": "上海 浦东机场 入境 防 输入 全 闭 环 管理"
+   },
+   {
+    "confidence": 0.960736,
+    "text": "上海 浦东机场 入境 坊 输入 全 闭 环 管理"
+   }
+  ]
+ }
+}
 ```
 
 ## Contribute

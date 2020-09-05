@@ -2,6 +2,7 @@ const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
 
 const N_BEST_DEFAULT = 5;
+const DEFAULT_USER = "commandline";
 
 exports = module.exports = (program) => {
   /**
