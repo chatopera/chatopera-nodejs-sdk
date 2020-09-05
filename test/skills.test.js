@@ -14,8 +14,8 @@ const curdir = __dirname;
 const debug = require("debug")("chatopera:sdk:test");
 const generate = require("../lib/generate-authorization");
 const { Chatbot } = require("../index");
-const clientId = process.env["CLIENT_ID"];
-const clientSecret = process.env["CLIENT_SECRET"];
+const clientId = process.env["BOT_CLIENT_ID"];
+const clientSecret = process.env["BOT_CLIENT_SECRET"];
 const botProvider = process.env["BOT_PROVIDER"];
 
 const print = function (method, path, payload, resp) {

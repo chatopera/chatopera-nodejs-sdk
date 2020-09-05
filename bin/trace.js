@@ -54,7 +54,7 @@ exports = module.exports = async (program) => {
    */
   program
     .command("trace")
-    .option("-c, --clientid <value>", "ClientId of the bot, *required.")
+    .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
       "Client Secret of the bot, optional, default null"
@@ -68,28 +68,47 @@ exports = module.exports = async (program) => {
       "Log level to follow, optional, [DEBUG|INFO|WARN|ERROR], default DEBUG"
     )
     .action(async (cmd) => {
+      require("./env.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
       let { provider, clientid, clientsecret, logLevel } = cmd;
 
-      if (typeof clientsecret === "boolean") {
-        clientsecret = null;
+      if (typeof clientid === "boolean" || !clientid) {
+        clientid = process.env["BOT_CLIENT_ID"];
+        if (!clientid) {
+          throw new Error(
+            "[Error] Invalid clientid, set it with cli param `-c CLIENT_ID` or .env file"
+          );
+        }
       }
 
-      if (typeof provider === "boolean") {
-        provider = null;
+      if (typeof clientsecret === "boolean" || !clientsecret) {
+        clientsecret = process.env["BOT_CLIENT_SECRET"];
+        if (!clientsecret) {
+          console.log("[WARN] client secret is not configured.");
+        }
+      }
+
+      if (typeof provider === "boolean" || !provider) {
+        provider = process.env["BOT_PROVIDER"];
+      }
+
+      if (!!provider) {
+        console.log(
+          ">> connect to %s, clientId %s, secret *** ...",
+          provider,
+          clientid
+        );
+      } else {
+        console.log(
+          ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
+          clientid
+        );
       }
 
       if (typeof logLevel === "boolean") {
         logLevel = "DEBUG";
       }
-
-      if (!!provider) {
-        console.log(">> connect to " + provider + " ...");
-      } else {
-        console.log(">> connect to https://bot.chatopera.com ...");
-      }
-
       console.log("[trace] clientId %s, logLevel %s", clientid, logLevel);
 
       let client = null;

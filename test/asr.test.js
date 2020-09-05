@@ -19,8 +19,8 @@ const curdir = __dirname;
 const fs = require("fs");
 const debug = require("debug")("chatopera:sdk:test:asr");
 const { Chatbot } = require("../index");
-const clientId = process.env["CLIENT_ID"];
-const clientSecret = process.env["CLIENT_SECRET"];
+const clientId = process.env["BOT_CLIENT_ID"];
+const clientSecret = process.env["BOT_CLIENT_SECRET"];
 const botProvider = process.env["BOT_PROVIDER"];
 
 test.before(async (t) => {

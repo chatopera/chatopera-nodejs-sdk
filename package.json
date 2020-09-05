@@ -1,7 +1,7 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.5.1",
-  "description": "Deliver chatbot for Enterprises, https://bot.chatopera.com",
+  "version": "2.5.2",
+  "description": "聊天机器人即服务，Build chatbots for Enterprise. https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
     "bot": "bin/bot.js"
@@ -26,6 +26,7 @@
     "archiver": "^4.0.2",
     "commander": "^5.1.0",
     "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "inquirer-command-prompt": "0.0.28",
     "moment-timezone": "^0.5.31",
@@ -33,8 +34,7 @@
   },
   "devDependencies": {
     "@chatopera/wavefile": "^11.0.2",
-    "ava": "^3.10.1",
-    "dotenv": "^8.2.0"
+    "ava": "^3.10.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

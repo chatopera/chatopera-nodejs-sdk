@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
+const DEFAULT_USER = "commandline";
 
 exports = module.exports = (program) => {
   /**
@@ -8,11 +9,14 @@ exports = module.exports = (program) => {
    */
   program
     .command("connect")
-    .option("-c, --clientid <value>", "ClientId of the bot, *required.")
-    .option("-u, --username <value>", "Username to chat with bot, *required.")
+    .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
       "Client Secret of the bot, optional, default null"
+    )
+    .option(
+      "-u, --username [value]",
+      "Username to chat with bot, default: " + DEFAULT_USER
     )
     .option(
       "-p, --provider [value]",
@@ -27,6 +31,7 @@ exports = module.exports = (program) => {
       "FAQ suggest reply threshold, optional, default 0.6"
     )
     .action((cmd) => {
+      require("./env.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
       let {
@@ -38,12 +43,28 @@ exports = module.exports = (program) => {
         faqSugg,
       } = cmd;
 
-      if (typeof clientsecret === "boolean") {
-        clientsecret = null;
+      if (typeof clientid === "boolean" || !clientid) {
+        clientid = process.env["BOT_CLIENT_ID"];
+        if (!clientid) {
+          throw new Error(
+            "[Error] Invalid clientid, set it with cli param `-c CLIENT_ID` or .env file"
+          );
+        }
       }
 
-      if (typeof provider === "boolean") {
-        provider = null;
+      if (typeof clientsecret === "boolean" || !clientsecret) {
+        clientsecret = process.env["BOT_CLIENT_SECRET"];
+        if (!clientsecret) {
+          console.log("[WARN] client secret is not configured.");
+        }
+      }
+
+      if (typeof provider === "boolean" || !provider) {
+        provider = process.env["BOT_PROVIDER"];
+      }
+
+      if (typeof username === "boolean" || !username) {
+        username = process.env["BOT_USERNAME"] || DEFAULT_USER;
       }
 
       try {
@@ -85,16 +106,22 @@ exports = module.exports = (program) => {
       }
 
       if (!!provider) {
-        console.log(">> connect to " + provider + " ...");
+        console.log(
+          ">> connect to %s, clientId %s, secret *** ...",
+          provider,
+          clientid
+        );
       } else {
-        console.log(">> connect to https://bot.chatopera.com ...");
+        console.log(
+          ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
+          clientid
+        );
       }
 
       debug(
-        "[connect] clientId %s, userName %s, secret %s, provider %s",
+        "[connect] clientId %s, userName %s, secret *****, provider %s",
         clientid,
         username,
-        clientsecret,
         provider
       );
 
