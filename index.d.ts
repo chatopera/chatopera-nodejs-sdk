@@ -114,27 +114,6 @@ declare class Chatbot {
     uid: string,
     textMessage: string
   ): Promise<IntentChatResult>;
-
-  /**
-   * 技能：心理咨询查询
-   * @param query
-   * @param threshold
-   */
-  psychSearch(query: string, threshold: number): Promise<ResponseResult>;
-
-  /**
-   * 技能：心理咨询对话
-   * @param channel
-   * @param channelId
-   * @param userId
-   * @param textMessage
-   */
-  psychChat(
-    channel: string,
-    channelId: string,
-    userId: string,
-    textMessage: string
-  ): Promise<ResponseResult>;
 }
 
 export = { Chatbot };

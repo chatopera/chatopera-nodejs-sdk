@@ -87,9 +87,6 @@ Chatbot.prototype.command = function (method, path, payload, headers, attach) {
   let isSend = true;
 
   if (method === "POST" && path.startsWith("/asr/recognize")) {
-    // 特殊请求：语音识别
-    // debug("[command] POST /asr/recognize", payload);
-
     // 发送文件
     if (payload["filepath"] && fs.existsSync(payload["filepath"])) {
       req.set("Content-Type", "multipart/form-data");
@@ -423,55 +420,6 @@ Chatbot.prototype.intentChat = function (sessionId, uid, textMessage) {
     },
     "use `Chatbot#command` API instead, removed in 2020-10",
     depCode("intentChat", "2020-07-18")
-  );
-  return fn();
-};
-
-/**
- * Skills: 心理咨询聊天
- * @param {*} channel
- * @param {*} channelId
- * @param {*} userId
- * @param {*} textMessage
- */
-Chatbot.prototype.psychChat = function (
-  channel,
-  channelId,
-  userId,
-  textMessage
-) {
-  let self = this;
-  let fn = deprecate(
-    () => {
-      return self.command("POST", "/skills/psych/chat", {
-        channel: channel,
-        channelId: channelId,
-        userId: userId,
-        textMessage: textMessage,
-      });
-    },
-    "use `Chatbot#command` API instead, removed in 2020-10",
-    depCode("psychChat", "2020-07-18")
-  );
-  return fn();
-};
-
-/**
- * Skills: 心理咨询查询
- * @param {*} query
- * @param {*} threshold
- */
-Chatbot.prototype.psychSearch = function (query, threshold) {
-  let self = this;
-  let fn = deprecate(
-    () => {
-      return self.command("POST", "/skills/psych/search", {
-        query: query,
-        threshold: threshold || 0.2,
-      });
-    },
-    "use `Chatbot#command` API instead, removed in 2020-10",
-    depCode("psychSearch", "2020-07-18")
   );
   return fn();
 };
