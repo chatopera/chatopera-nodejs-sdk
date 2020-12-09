@@ -10,7 +10,7 @@ declare class Chatbot {
   constructor(
     clientId: string,
     clientSecret: string,
-    host: string = "https://bot.chatopera.com"
+    host: string = "https://bot.cskefu.com"
   );
 
   /**

@@ -1,7 +1,7 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.5.5",
-  "description": "聊天机器人即服务，Build chatbots for Enterprise. https://bot.chatopera.com",
+  "version": "2.5.6",
+  "description": "聊天机器人即服务，Build chatbots for Enterprise. https://bot.cskefu.com",
   "main": "index.js",
   "bin": {
     "bot": "bin/bot.js"
@@ -15,12 +15,12 @@
     "chatbot",
     "question-and-answering"
   ],
-  "author": "Chatopera <info@chatopera.com>",
+  "author": "Chatopera <info@cskefu.com>",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/chatopera/conversation-sampleapp/issues"
   },
-  "homepage": "https://bot.chatopera.com/",
+  "homepage": "https://bot.cskefu.com/",
   "dependencies": {
     "@chatopera/q": "^1.0.1",
     "archiver": "^4.0.2",

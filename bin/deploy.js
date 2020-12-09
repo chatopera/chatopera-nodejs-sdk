@@ -18,7 +18,7 @@ exports = module.exports = async (program) => {
     )
     .option(
       "-p, --provider [value]",
-      "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
+      "Chatopera Bot Service URL, optional, default https://bot.cskefu.com"
     )
     .option("-b, --botarchive <value>", "Conversation Bundle, *required.")
     .action(async (cmd) => {
@@ -53,7 +53,7 @@ exports = module.exports = async (program) => {
         );
       } else {
         console.log(
-          ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
+          ">> connect to https://bot.cskefu.com, clientId %s, secret *** ...",
           clientid
         );
       }

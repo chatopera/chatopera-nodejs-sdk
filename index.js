@@ -1,6 +1,6 @@
 /**
  * Chatopera Node.js SDK
- * Copyright 2020 Chatopera Inc. <https://www.chatopera.com>. All rights reserved.
+ * Copyright 2020 Chatopera Inc. <https://www.cskefu.com>. All rights reserved.
  * This software and related documentation are provided under a license agreement containing
  * restrictions on use and disclosure and are protected by intellectual property laws.
  * Except as expressly permitted in your license agreement or allowed by law, you may not use,
@@ -30,7 +30,7 @@ const depCode = (fnName, day) => {
  * @param {*} clientSecret
  * @param {*} host
  */
-function Chatbot(clientId, clientSecret, host = "https://bot.chatopera.com") {
+function Chatbot(clientId, clientSecret, host = "https://bot.cskefu.com") {
   if (clientId) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
