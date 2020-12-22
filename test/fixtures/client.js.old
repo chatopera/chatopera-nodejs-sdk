@@ -12,7 +12,7 @@ const baseURL = process.env["SUPERBRAIN_PROXY_URL"]
       let q = url.parse(process.env["SUPERBRAIN_PROXY_URL"]);
       return `${q.protocol}//${q.host}`;
     })()
-  : "https://bot.cskefu.com";
+  : "https://bot.chatopera.com";
 const basePath = "/api/v1/chatbot";
 const generate = require("./generate-authorization");
 

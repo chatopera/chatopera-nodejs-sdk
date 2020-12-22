@@ -7,7 +7,7 @@
 
 ---
 
-[Chatopera](https://www.cskefu.com/)提供聊天机器人开发者平台，Chatopera SDK 用于在 Node.js 应用中集成[聊天机器人服务](https://bot.cskefu.com/)。
+[Chatopera](https://www.chatopera.com/)提供聊天机器人开发者平台，Chatopera SDK 用于在 Node.js 应用中集成[聊天机器人服务](https://bot.chatopera.com/)。
 
 聊天机器人即服务，自动化、智能化的自然语言交互！
 
@@ -21,9 +21,9 @@ npm install @chatopera/sdk --save
 
 ## 使用文档
 
-快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.cskefu.com/products/chatbot-platform/integration.html)：
+快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration.html)：
 
-[https://docs.cskefu.com/products/chatbot-platform/integration.html](https://docs.cskefu.com/products/chatbot-platform/integration.html)
+[https://docs.chatopera.com/products/chatbot-platform/integration.html](https://docs.chatopera.com/products/chatbot-platform/integration.html)
 
 ## 命令行工具
 
@@ -45,14 +45,14 @@ bot --help
 | ---------------------------------- | ------------------------ | ------------------- | --------------------------------- |
 | clientId, 机器人 ID                | `-c, --clientid [value]` | `BOT_CLIENT_ID`     | 无默认值，必填                    |
 | secret, 机器人密钥                 | `-u, --username [value]` | `BOT_CLIENT_SECRET` | 无默认值，必填                    |
-| provider, Chatopera 机器人平台地址 | `-p, --provider [value]` | `BOT_PROVIDER`      | 默认值，https://bot.cskefu.com |
+| provider, Chatopera 机器人平台地址 | `-p, --provider [value]` | `BOT_PROVIDER`      | 默认值，https://bot.chatopera.com |
 
 其中， `.env` 文件例子如：
 
 ```
 BOT_CLIENT_ID=xxx
 BOT_CLIENT_SECRET=xxx
-BOT_PROVIDER=https://bot.cskefu.com
+BOT_PROVIDER=https://bot.chatopera.com
 ```
 
 `.env` 文件存储的也是环境变量值。`bot` 命令会沿当前执行命令的路径(`pwd`)，寻找 `.env` 文件。
@@ -77,12 +77,12 @@ Options:
   -c, --clientid [value]      ClientId of the bot
   -s, --clientsecret [value]  Client Secret of the bot, optional, default null
   -u, --username [value]      Username to chat with bot, default: commandline
-  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.cskefu.com
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
   -fb, --faq-best [value]     FAQ best reply threshold, optional, default 0.8
   -fs, --faq-sugg [value]     FAQ suggest reply threshold, optional, default 0.6
 ```
 
-其中，`clientid`和`clientsecret`从每个机器人的设置页面获取，`username`代表用户名，是一个不含空格或特殊符号的字符串，每个用户的唯一标识，`provider`是[Chatopera 机器人平台](https://docs.cskefu.com/products/chatbot-platform/index.html)地址，默认为 [Chatopera 云服务](https://bot.cskefu.com/)。
+其中，`clientid`和`clientsecret`从每个机器人的设置页面获取，`username`代表用户名，是一个不含空格或特殊符号的字符串，每个用户的唯一标识，`provider`是[Chatopera 机器人平台](https://docs.chatopera.com/products/chatbot-platform/index.html)地址，默认为 [Chatopera 云服务](https://bot.chatopera.com/)。
 
 示例：
 
@@ -100,7 +100,7 @@ bot connect -c xxx -s xxx -u zhangsan
 
 ### 上传多轮对话脚本
 
-在命令行终端发布脚本文件到[多轮对话](https://docs.cskefu.com/products/chatbot-platform/conversation.html)中。
+在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation.html)中。
 
 ```
 Usage: deploy [options]
@@ -108,7 +108,7 @@ Usage: deploy [options]
 Options:
   -c, --clientid [value]      ClientId of the bot
   -s, --clientsecret [value]  Client Secret of the bot, optional, default null.
-  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.cskefu.com
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
   -b, --botarchive <value>    Conversation Bundle, *required.
   -h, --help                  display help for command
 ```
@@ -143,7 +143,7 @@ botarchive
 }
 ```
 
-`plugin.js`是`函数`，参考[说明文档](https://docs.cskefu.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
+`plugin.js`是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
 
 快速开始参考[示例程序](https://github.com/chatopera/chatbot-samples)：[活动通知](https://github.com/chatopera/chatbot-samples/tree/master/projects/%E6%B4%BB%E5%8A%A8%E9%80%9A%E7%9F%A5)。
 
@@ -157,7 +157,7 @@ Usage: bot trace [options]
 Options:
   -c, --clientid [value]      ClientId of the bot
   -s, --clientsecret [value]  Client Secret of the bot, optional, default null
-  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.cskefu.com
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
   -l, --log-level [value]     Log level to follow, optional, [DEBUG|INFO|WARN|ERROR], default DEBUG
   -h, --help                  display help for command
 ```
@@ -171,7 +171,7 @@ Options:
   -c, --clientid [value]      ClientId of the bot
   -u, --username [value]      Username to chat with bot
   -s, --clientsecret [value]  Client Secret of the bot, optional, default null
-  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.cskefu.com
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default https://bot.chatopera.com
   -f, --file <value>          Target file to recognize, *required.
   -h, --help                  display help for command
 ```
@@ -219,9 +219,9 @@ npm run test
 
 Apache 2.0
 
-Copyright 2018-2020, [北京华夏春松科技有限公司](https://www.cskefu.com/). All rights reserved. This software and related documentation are provided under a license agreement containing restrictions on use and disclosure and are protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.
+Copyright 2018-2020, [北京华夏春松科技有限公司](https://www.chatopera.com/). All rights reserved. This software and related documentation are provided under a license agreement containing restrictions on use and disclosure and are protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.
 
 [![chatoper banner][co-banner-image]][co-url]
 
 [co-banner-image]: https://user-images.githubusercontent.com/3538629/42383104-da925942-8168-11e8-8195-868d5fcec170.png
-[co-url]: https://www.cskefu.com
+[co-url]: https://www.chatopera.com

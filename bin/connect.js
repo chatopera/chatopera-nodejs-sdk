@@ -20,7 +20,7 @@ exports = module.exports = (program) => {
     )
     .option(
       "-p, --provider [value]",
-      "Chatopera Bot Service URL, optional, default https://bot.cskefu.com"
+      "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .option(
       "-fb, --faq-best [value]",
@@ -113,7 +113,7 @@ exports = module.exports = (program) => {
         );
       } else {
         console.log(
-          ">> connect to https://bot.cskefu.com, clientId %s, secret *** ...",
+          ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
           clientid
         );
       }
