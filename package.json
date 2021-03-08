@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "description": "低代码或无代码方式定制智能对话机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
@@ -13,7 +13,10 @@
   "keywords": [
     "chatopera",
     "chatbot",
-    "question-and-answering"
+    "question-and-answering",
+    "bot",
+    "nlp",
+    "nlu"
   ],
   "author": "Chatopera <info@chatopera.com>",
   "license": "SEE LICENSE IN LICENSE",

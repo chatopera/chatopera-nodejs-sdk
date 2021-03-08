@@ -95,7 +95,7 @@ bot connect -c xxx -s xxx -u zhangsan
 
 ### 上传多轮对话脚本
 
-在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation.html)中。
+在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation/index.html)中。
 
 ```
 Usage: deploy [options]
@@ -138,7 +138,7 @@ botarchive
 }
 ```
 
-`plugin.js` 是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
+`plugin.js` 是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation/function.html)。
 
 快速开始参考[示例程序](https://github.com/chatopera/chatbot-samples)：[活动通知](https://github.com/chatopera/chatbot-samples/tree/master/projects/%E6%B4%BB%E5%8A%A8%E9%80%9A%E7%9F%A5)。
 
