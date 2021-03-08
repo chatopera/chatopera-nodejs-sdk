@@ -1,7 +1,7 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.5.7",
-  "description": "聊天机器人即服务，Build chatbots for Enterprise. https://bot.chatopera.com",
+  "version": "2.5.8",
+  "description": "低代码或无代码方式定制智能对话机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
     "bot": "bin/bot.js"

@@ -1,15 +1,10 @@
-<p align="center">
-  <b>Chatopera开发者平台：809987971， <a href="https://jq.qq.com/?_wv=1027&k=5S51T2a" target="_blank">点击链接加入群聊</a></b><br>
-  <img src="https://user-images.githubusercontent.com/3538629/48065864-d2da4080-e206-11e8-9f3b-a739719572dd.png" width="200">
-</p>
-
 # Chatopera Node.js SDK
 
 ---
 
-[Chatopera](https://www.chatopera.com/)提供聊天机器人开发者平台，Chatopera SDK 用于在 Node.js 应用中集成[聊天机器人服务](https://bot.chatopera.com/)。
+低代码或无代码方式定制智能对话机器人！
 
-聊天机器人即服务，自动化、智能化的自然语言交互！
+[Chatopera](https://www.chatopera.com/) 提供聊天机器人开发者平台，Chatopera SDK 用于在 Node.js 应用中集成[聊天机器人服务](https://bot.chatopera.com/)。
 
 ## 安装
 
@@ -21,9 +16,9 @@ npm install @chatopera/sdk --save
 
 ## 使用文档
 
-快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration.html)：
+快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration/index.html)：
 
-[https://docs.chatopera.com/products/chatbot-platform/integration.html](https://docs.chatopera.com/products/chatbot-platform/integration.html)
+[https://docs.chatopera.com/products/chatbot-platform/integration/index.html](https://docs.chatopera.com/products/chatbot-platform/integration/index.html)
 
 ## 命令行工具
 
@@ -68,7 +63,7 @@ BOT_PROVIDER=https://bot.chatopera.com
 
 ### 连接聊天机器人
 
-在命令行终端连接 Bot 并进行对话。
+在命令行终端连接 BOT 并进行对话。
 
 ```
 Usage: connect [options]
@@ -143,7 +138,7 @@ botarchive
 }
 ```
 
-`plugin.js`是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
+`plugin.js` 是`函数`，参考[说明文档](https://docs.chatopera.com/products/chatbot-platform/conversation.html#%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E8%AE%BE%E8%AE%A1%E5%99%A8)。
 
 快速开始参考[示例程序](https://github.com/chatopera/chatbot-samples)：[活动通知](https://github.com/chatopera/chatbot-samples/tree/master/projects/%E6%B4%BB%E5%8A%A8%E9%80%9A%E7%9F%A5)。
 
@@ -205,6 +200,11 @@ bot asr -c xxx \
 }
 ```
 
+## Support
+
+技术支持：
+[https://docs.chatopera.com/products/chatbot-platform/support.html](https://docs.chatopera.com/products/chatbot-platform/support.html)
+
 ## Contribute
 
 打印调试日志
@@ -215,11 +215,11 @@ cp sample.env .env # edit .env
 npm run test
 ```
 
-## license
+## License
 
 Apache 2.0
 
-Copyright 2018-2020, [北京华夏春松科技有限公司](https://www.chatopera.com/). All rights reserved. This software and related documentation are provided under a license agreement containing restrictions on use and disclosure and are protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.
+Copyright 2018-2021, [北京华夏春松科技有限公司](https://www.chatopera.com/). All rights reserved. This software and related documentation are provided under a license agreement containing restrictions on use and disclosure and are protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.
 
 [![chatoper banner][co-banner-image]][co-url]
 
