@@ -16,9 +16,9 @@ npm install @chatopera/sdk --save
 
 ## 使用文档
 
-快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration/index.html)：
+快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)：
 
-[https://docs.chatopera.com/products/chatbot-platform/integration/index.html](https://docs.chatopera.com/products/chatbot-platform/integration/index.html)
+[https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)
 
 ## 命令行工具
 
@@ -41,6 +41,7 @@ bot --help
 | clientId, 机器人 ID                | `-c, --clientid [value]` | `BOT_CLIENT_ID`     | 无默认值，必填                    |
 | secret, 机器人密钥                 | `-u, --username [value]` | `BOT_CLIENT_SECRET` | 无默认值，必填                    |
 | provider, Chatopera 机器人平台地址 | `-p, --provider [value]` | `BOT_PROVIDER`      | 默认值，https://bot.chatopera.com |
+| accessToken, 访客设置密钥          | `无`                     | `BOT_ACCESS_TOKEN`  | 保留值，无默认值                  |
 
 其中， `.env` 文件例子如：
 
@@ -48,6 +49,7 @@ bot --help
 BOT_CLIENT_ID=xxx
 BOT_CLIENT_SECRET=xxx
 BOT_PROVIDER=https://bot.chatopera.com
+BOT_ACCESS_TOKEN=xxx
 ```
 
 `.env` 文件存储的也是环境变量值。`bot` 命令会沿当前执行命令的路径(`pwd`)，寻找 `.env` 文件。

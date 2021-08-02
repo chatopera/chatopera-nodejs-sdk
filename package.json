@@ -22,7 +22,7 @@
   "author": "Chatopera <info@chatopera.com>",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/chatopera/conversation-sampleapp/issues"
+    "url": "https://github.com/chatopera/docs/issues"
   },
   "homepage": "https://bot.chatopera.com/",
   "dependencies": {
