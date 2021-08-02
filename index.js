@@ -14,7 +14,7 @@ const fs = require('fs');
 const Q = require('@chatopera/q');
 const generate = require('./lib/generate-authorization');
 const { deprecate } = require('util');
-const Chatopera = require('./admin');
+const Chatopera = require('./chatopera');
 
 // 常量
 const BASE_PATH = '/api/v1/chatbot';
