@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "低代码或无代码方式定制智能对话机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
@@ -25,6 +25,10 @@
     "url": "https://github.com/chatopera/docs/issues"
   },
   "homepage": "https://bot.chatopera.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chatopera/chatopera-nodejs-sdk.git"
+  },
   "dependencies": {
     "@chatopera/q": "^1.0.1",
     "archiver": "^4.0.2",
