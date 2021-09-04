@@ -20,21 +20,99 @@ npm install @chatopera/sdk --save
 
 [https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)
 
-## 命令行工具
+Chatopera CLI 是连接 Chatopera 机器人平台，管理和维护资源的工具，包括一些常用的命令，辅助开发者实现和管理对话机器人。尤其是在有自动化或批量管理的需要时。CLI 完全基于 [Chatopera Node.js SDK](Chatopera Node.js SDK)，开发者也可以参考 SDK 源码，进一步掌握对 SDK 的使用。
 
-Chatopera Node.js SDK 包括一些常用的命令，辅助开发者实现对话机器人。
+[https://github.com/chatopera/chatopera-nodejs-sdk](https://github.com/chatopera/chatopera-nodejs-sdk)
 
-### 获得帮助
 
-打印可用命令。
+## 安装 CLI
+
+Chatopera CLI 依赖于 [Node.js v10+](https://nodejs.org/zh-cn/) 环境，使用 `npm` 进行安装（`npm` 是 `Nodejs` 安装完成后得到的 CLI 工具）。
+
+- Windows 上安装 Node.js 及配置环境变量[参考文档](https://www.cnblogs.com/zjfjava/p/9677444.html)
+
+- Linux 上安装 Node.js [参考文档](https://segmentfault.com/a/1190000040178369)
+
+有了 Node.js 环境，在命令行终端，执行如下命令：
+
+```
+npm install -g @chatopera/sdk
+```
+
+在 Windows 上，安装过程输出类似的日志：
+
+```
+ npm install -g @chatopera/sdk
+C:\Users\Administrator\AppData\Roaming\npm\bot -> C:\Users\Administrator\AppData
+\Roaming\npm\node_modules\@chatopera\sdk\bin\bot.js
++ @chatopera/sdk@2.6.1
+added 147 packages from 104 contributors in 36.389s
+```
+
+检查安装是否正确，执行：
+
+```
+$ bot --version
+2.6.1  # 得到类似输出，代表安装正确，2.6.1 为当时最新的 Chatopera CLI 版本
+```
+
+如果上述命令 `bot --version` 执行提示错误，检查环境变量 `PATH` 路径，比如 `C:\Users\Administrator\AppData\Roaming\npm` 是否在 `PATH` 内。
+
+## 获得帮助
+
+打印 CLI 可用命令。
 
 ```
 bot --help
 ```
 
-### 配置
+得到类似输出:
 
-**优先级:** 命令行参数 > `.env`文件 > 环境变量
+```
+Usage: bot [options] [command]
+
+Options:
+  -V, --version      output the version number
+  -h, --help         display help for command
+
+Commands:
+  connect [options]
+  deploy [options]
+  trace [options]
+  asr [options]
+  help [command]     display help for command
+```
+
+也可以针对一个命令，获得更多帮助提示，比如：
+
+```
+bot connect --help
+```
+
+获得类似输出：
+
+```
+Usage: bot connect [options]
+
+Options:
+  -c, --clientid [value]      ClientId of the bot
+  -s, --clientsecret [value]  Client Secret of the bot, optional, default null
+  -u, --username [value]      Username to chat with bot, default: commandline
+  -p, --provider [value]      Chatopera Bot Service URL, optional, default
+                              https://bot.chatopera.com
+  -fb, --faq-best [value]     FAQ best reply threshold, optional, default 0.8
+  -fs, --faq-sugg [value]     FAQ suggest reply threshold, optional, default
+                              0.6
+  -h, --help                  display help for command
+```
+
+
+## 配置
+
+
+Chatopera CLI 命令行工具支持读取文件配置变量，比如 `provider`, `clientid` 等常用的变量。
+
+**参数设定优先级:** 命令行参数 > `.env` 文件 > 环境变量
 
 | 映射配置项                         | 命令行参数               | 环境变量            | 备注                              |
 | ---------------------------------- | ------------------------ | ------------------- | --------------------------------- |
@@ -63,7 +141,7 @@ BOT_ACCESS_TOKEN=xxx
 /.env
 ```
 
-### 连接聊天机器人
+## 连接聊天机器人
 
 在命令行终端连接 BOT 并进行对话。
 
@@ -95,7 +173,7 @@ bot connect -c xxx -s xxx -u zhangsan
 | 打印历史                                 | Shift + → 右箭头                               |
 | 使用索引输入历史，索引根据*打印历史*获得 | 输入索引，然后 Ctrl + Shift + Shift + → 右箭头 |
 
-### 上传多轮对话脚本
+## 上传多轮对话脚本
 
 在命令行终端发布脚本文件到[多轮对话](https://docs.chatopera.com/products/chatbot-platform/conversation/index.html)中。
 
@@ -110,9 +188,12 @@ Options:
   -h, --help                  display help for command
 ```
 
-其中 `botarchive` 为**机器人的话题文件目录**或 `xx.c66` 文件，支持*相对路径*或*绝对路径*。
+其中 `botarchive` 为 `xx.c66` 文件或**机器人的话题文件目录**，支持相对路径和绝对路径。
 
-标准目录结构:
+
+### 机器人的话题文件目录
+
+将 `xx.c66` 文件后缀调整为 `.zip` 并解压后的目录结构。
 
 ```
 botarchive
@@ -144,7 +225,10 @@ botarchive
 
 快速开始参考[示例程序](https://github.com/chatopera/chatbot-samples)：[活动通知](https://github.com/chatopera/chatbot-samples/tree/master/projects/%E6%B4%BB%E5%8A%A8%E9%80%9A%E7%9F%A5)。
 
-### 打印聊天机器人日志
+Chatopera CLI 支持直接使用 `-b` 参数指定`机器人的话题文件目录`的方式上传多轮对话。
+
+
+## 打印聊天机器人日志
 
 方便调试多轮对话脚本，实时跟踪服务器端日志，排查问题。
 
@@ -159,7 +243,7 @@ Options:
   -h, --help                  display help for command
 ```
 
-### 语音识别
+## 语音识别
 
 ```
 Usage: bot asr [options]
@@ -205,7 +289,7 @@ bot asr -c xxx \
 ## Support
 
 技术支持：
-[https://docs.chatopera.com/products/chatbot-platform/support.html](https://docs.chatopera.com/products/chatbot-platform/support.html)
+[https://docs.chatopera.com/products/chatbot-platform/contract/support.html](https://docs.chatopera.com/products/chatbot-platform/contract/support.html)
 
 ## Contribute
 
