@@ -6,6 +6,106 @@ const fs = require("fs");
 const moment = require("moment-timezone");
 const logger = require("../lib/logger");
 const _ = require("lodash");
+const { sleep } = require("../lib/utils.js");
+
+/**
+ * 在意图识别、FAQ 和多轮对话上，同步近义词词典
+ * @param {*} payload
+ */
+async function dictsSync(payload) {
+  let client = null;
+  if (payload.provider) {
+    client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
+  } else {
+    client = new Bot(payload.clientid, payload.clientsecret);
+  }
+
+  /**
+   * 同步多轮对话
+   */
+  let result = await client.command("POST", "/conversation/sync/customdicts");
+  if (result && result.rc == 0) {
+    // 正常，并且已经完成
+    logger.log("  Conversations have been synced now.");
+  } else {
+    logger.log("[ERROR]", result);
+    process.exit(1);
+  }
+
+  /**
+   * 同步知识库
+   */
+  result = await client.command("GET", "/");
+
+  logger.log("  Start to sync faq ...");
+  if (result && result.rc == 0) {
+    if (result.data.status.reindex == 2) {
+      result = await client.command("POST", "/faq/sync/customdicts");
+      if (result && result.rc == 0) {
+        // 正常，在异步执行，检查
+        let loop = true;
+        while (loop) {
+          await sleep();
+          let result2 = await client.command("GET", "/");
+
+          if (result2 && result2.data.status.reindex == 0) {
+            loop = false;
+            logger.log("  Faq has been synced now.");
+          } else if (result2 && result2.data.status.reindex == 1) {
+            // 同步中
+          } else {
+            // 其他异常
+            logger.log("[ERROR]", result2);
+            process.exit(1);
+          }
+        }
+      } else {
+        logger.log("[ERROR]", result);
+        process.exit(1);
+      }
+    } else if (result.data.status.reindex == 0) {
+      logger.log("[WARN]", "Faq is synced with Dicts, no need to do it again.");
+    } else {
+      logger.log(
+        "[WARN]",
+        "Faq is syncing, no need to send another request, or you can command again later to force reindex."
+      );
+    }
+  }
+
+  /**
+   * 意图识别同步
+   */
+  // 执行训练
+  logger.log("Start to train model for dev branch ...");
+
+  result = await client.command("POST", "/clause/devver/train");
+
+  if (result && result.rc == 0) {
+    let loop = true;
+    while (loop) {
+      // 等待状态
+      await sleep();
+
+      // 检查状态
+      let result2 = await client.command("GET", "/clause/devver/build");
+
+      if (result2 && result2.rc == 0) {
+        logger.log("  Train works done successfully.");
+        loop = false;
+      } else if (result2 && result2.rc == 2) {
+        logger.log("  Train in progress ...");
+      } else {
+        // errors
+        logger.error("Error happens during training", result2);
+        process.exit(1);
+      }
+    }
+  } else {
+    logger.error("Fails to train model for dev branch", e);
+    process.exit(1);
+  }
+}
 
 async function dictsImport(payload) {
   debug("[dictsImport] payload %j", payload);
@@ -272,6 +372,7 @@ exports = module.exports = (program) => {
       new Option("-a, --action <value>", "Operation action").choices([
         "import",
         "export",
+        "sync",
       ])
     )
     .option(
@@ -327,7 +428,7 @@ exports = module.exports = (program) => {
           );
           process.exit(1);
         }
-      } else {
+      } else if (action == "export") {
         // for export
         if (typeof filepath === "boolean" || !filepath) {
           // generate a file
@@ -343,6 +444,8 @@ exports = module.exports = (program) => {
           logger.error(`${filepath} file exist`);
           process.exit(1);
         }
+      } else {
+        // sync
       }
 
       if (!!provider) {
@@ -369,8 +472,11 @@ exports = module.exports = (program) => {
 
       if (action == "import") {
         await dictsImport(payload);
-      } else {
+      } else if (action == "export") {
         await dictsExport(payload);
+      } else {
+        // for sync
+        await dictsSync(payload);
       }
     });
 };
