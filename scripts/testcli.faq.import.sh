@@ -20,4 +20,4 @@ if [ ! -d ./tmp ]; then
 fi
 
 DEBUG=chatopera:sdk:cli \
-./bin/bot.js faq --action import --filepath ./tmp/faq.pairs.import.json
+./bin/bot.js faq --action import --filepath ./tmp/bot.faqs.json

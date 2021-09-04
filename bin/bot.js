@@ -15,7 +15,7 @@ if (!process.env.TZ) process.env.TZ = "Asia/Shanghai";
 // main function
 async function main() {
   await require("./connect")(program);
-  await require("./deploy")(program);
+  await require("./conversation")(program);
   await require("./trace")(program);
   await require("./asr")(program);
   await require("./faq")(program);

@@ -19,10 +19,10 @@ if [ ! -d ./tmp ]; then
     mkdir ./tmp
 fi
 
-OUTPUT_FILE=./tmp/bot.faqs.json
+INPUT_FILE=./tmp/bot.conversations.c66
 
-if [ -f $OUTPUT_FILE ]; then
-    rm -rf $OUTPUT_FILE
+if [ -f $INPUT_FILE ]; then
+    rm -rf $INPUT_FILE
 fi
 
-./bin/bot.js faq --action export --filepath $OUTPUT_FILE
+./bin/bot.js conversation --action import --filepath $INPUT_FILE

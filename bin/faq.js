@@ -225,10 +225,10 @@ exports = module.exports = (program) => {
       "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .addOption(
-      new Option(
-        "-a, --action <value>",
-        "Client Secret of the bot, optional, default null"
-      ).choices(["import", "export"])
+      new Option("-a, --action <value>", "Operation action").choices([
+        "import",
+        "export",
+      ])
     )
     .option(
       "-f, --filepath [value]",
@@ -261,7 +261,12 @@ exports = module.exports = (program) => {
         provider = process.env["BOT_PROVIDER"];
       }
 
-      if (action == "import") {
+      if (action == undefined) {
+        logger.error(
+          "error: option '-a, --action <value>' argument is invalid. Allowed choices are import, export."
+        );
+        process.exit(1);
+      } else if (action == "import") {
         if (!filepath) {
           logger.error(
             `-f or --filepath FILE_PATH is required in command line for importing faq.`
@@ -284,7 +289,7 @@ exports = module.exports = (program) => {
           // generate a file
           filepath = require("path").join(
             process.cwd(),
-            `faq.pairs.${moment()
+            `bot.faqs.${moment()
               .tz(process.env.TZ)
               .format("YYYY_MM_DD_HHmmss")}.json`
           );
