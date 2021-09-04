@@ -25,4 +25,4 @@ if [ -f $OUTPUT_FILE ]; then
     rm -rf $OUTPUT_FILE
 fi
 
-./bin/bot.js conversation --action export #--filepath $OUTPUT_FILE
+./bin/bot.js conversation --action export --filepath $OUTPUT_FILE

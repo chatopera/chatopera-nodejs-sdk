@@ -205,7 +205,7 @@ exports = module.exports = (program) => {
    */
   program
     .command("intents")
-    .description("import or export a bot's intents data")
+    .description("train, import or export a bot's intents data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",

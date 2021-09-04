@@ -26,10 +26,9 @@ async function dictsSync(payload) {
   let result = await client.command("POST", "/conversation/sync/customdicts");
   if (result && result.rc == 0) {
     // 正常，并且已经完成
-    logger.log("  Conversations have been synced now.");
+    logger.log("  Conversations have been synchronized.");
   } else {
-    logger.log("[ERROR]", result);
-    process.exit(1);
+    logger.error("  Fail to synchronize Conversations. ERROR", result);
   }
 
   /**
@@ -50,21 +49,23 @@ async function dictsSync(payload) {
 
           if (result2 && result2.data.status.reindex == 0) {
             loop = false;
-            logger.log("  Faq has been synced now.");
+            logger.log("  Faq has been synchronized.");
           } else if (result2 && result2.data.status.reindex == 1) {
             // 同步中
           } else {
             // 其他异常
-            logger.log("[ERROR]", result2);
-            process.exit(1);
+            logger.error("  Fail to synchronize Faq. ERROR", result2);
+            loop = false;
           }
         }
       } else {
-        logger.log("[ERROR]", result);
-        process.exit(1);
+        logger.error("  Fail to synchronize Faq. ERROR", result2);
       }
     } else if (result.data.status.reindex == 0) {
-      logger.log("[WARN]", "Faq is synced with Dicts, no need to do it again.");
+      logger.log(
+        "[WARN]",
+        "Faq is synchronized with Dicts, no need to do it again."
+      );
     } else {
       logger.log(
         "[WARN]",
@@ -77,7 +78,7 @@ async function dictsSync(payload) {
    * 意图识别同步
    */
   // 执行训练
-  logger.log("Start to train model for dev branch ...");
+  logger.log("  Start to train model for dev branch ...");
 
   result = await client.command("POST", "/clause/devver/train");
 
@@ -241,6 +242,8 @@ async function dictsImport(payload) {
         }
       }
     }
+
+    logger.log("Dicts is imported  successfully.");
   } else {
     logger.error("Can not load data with " + payload.filepath);
     process.exit(1);
@@ -361,7 +364,7 @@ exports = module.exports = (program) => {
    */
   program
     .command("dicts")
-    .description("import or export a bot's dicts data")
+    .description("sync, import or export a bot's dicts data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",

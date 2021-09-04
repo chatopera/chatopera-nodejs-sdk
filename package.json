@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "低代码或无代码方式定制智能对话机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
@@ -13,6 +13,7 @@
   "keywords": [
     "chatopera",
     "chatbot",
+    "cli",
     "知识库",
     "智能对话机器人",
     "聊天机器人",

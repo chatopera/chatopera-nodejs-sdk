@@ -1,6 +1,6 @@
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
-
+const logger = require("../lib/logger");
 const moment = require("moment-timezone");
 const TRACE_IDS = new Set();
 
@@ -21,7 +21,7 @@ function traceLoop(client, logLevel, afterDate) {
             TRACE_IDS.add(res.data[i]["id"]);
 
             var date = moment.tz(res.data[i]["createdAt"], process.env.TZ);
-            console.log(
+            logger.log(
               "%s %s %s %s",
               date.format("YYYY-MM-DD HH:mm:ss"),
               res.data[i]["logLevel"],
@@ -77,16 +77,17 @@ exports = module.exports = async (program) => {
       if (typeof clientid === "boolean" || !clientid) {
         clientid = process.env["BOT_CLIENT_ID"];
         if (!clientid) {
-          throw new Error(
+          logger.error(
             "[Error] Invalid clientid, set it with cli param `-c BOT_CLIENT_ID` or .env file"
           );
+          process.exit(1);
         }
       }
 
       if (typeof clientsecret === "boolean" || !clientsecret) {
         clientsecret = process.env["BOT_CLIENT_SECRET"];
         if (!clientsecret) {
-          console.log("[WARN] client secret is not configured.");
+          logger.log("[WARN] client secret is not configured.");
         }
       }
 
@@ -95,13 +96,13 @@ exports = module.exports = async (program) => {
       }
 
       if (!!provider) {
-        console.log(
+        logger.log(
           ">> connect to %s, clientId %s, secret *** ...",
           provider,
           clientid
         );
       } else {
-        console.log(
+        logger.log(
           ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
           clientid
         );
@@ -110,7 +111,7 @@ exports = module.exports = async (program) => {
       if (typeof logLevel === "boolean") {
         logLevel = "DEBUG";
       }
-      console.log("[trace] clientId %s, logLevel %s", clientid, logLevel);
+      logger.log("[trace] clientId %s, logLevel %s", clientid, logLevel);
 
       let client = null;
       if (provider) {

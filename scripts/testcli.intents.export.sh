@@ -21,4 +21,8 @@ fi
 
 OUTPUT_FILE=./tmp/bot.intents.json
 
+if [ -f $OUTPUT_FILE ]; then
+    rm -rf $OUTPUT_FILE
+fi
+
 DEBUG=chatopera:sdk:cli ./bin/bot.js intents --action export --filepath $OUTPUT_FILE

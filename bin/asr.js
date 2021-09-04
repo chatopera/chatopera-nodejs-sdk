@@ -1,5 +1,6 @@
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
+const logger = require("../lib/logger");
 
 const N_BEST_DEFAULT = 5;
 const DEFAULT_USER = "commandline";
@@ -42,7 +43,7 @@ exports = module.exports = (program) => {
       if (typeof clientsecret === "boolean" || !clientsecret) {
         clientsecret = process.env["BOT_CLIENT_SECRET"];
         if (!clientsecret) {
-          console.log("[WARN] client secret is not configured.");
+          logger.log("[WARN] client secret is not configured.");
         }
       }
 
@@ -55,13 +56,13 @@ exports = module.exports = (program) => {
       }
 
       if (!!provider) {
-        console.log(
+        logger.log(
           ">> connect to %s, clientId %s, secret *** ...",
           provider,
           clientid
         );
       } else {
-        console.log(
+        logger.log(
           ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
           clientid
         );
@@ -94,7 +95,7 @@ exports = module.exports = (program) => {
           fromUserId: username, // 记录发送语音的用户唯一标识 ID，可选，默认 无
         });
 
-        console.log(JSON.stringify(resp, null, " "));
+        logger.log(JSON.stringify(resp, null, " "));
       }
     });
 };

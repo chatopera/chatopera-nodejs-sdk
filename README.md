@@ -1,28 +1,10 @@
-# Chatopera Node.js SDK
+# Chatopera CLI & Node.js SDK
 
 ---
 
 低代码或无代码方式定制智能对话机器人！
 
 [Chatopera](https://www.chatopera.com/) 提供聊天机器人开发者平台，Chatopera SDK 用于在 Node.js 应用中集成[聊天机器人服务](https://bot.chatopera.com/)。
-
-## 安装
-
----
-
-```
-npm install @chatopera/sdk --save
-```
-
-## 接口使用文档
-
-快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)：
-
-[https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)
-
-Chatopera CLI 是连接 Chatopera 机器人平台，管理和维护资源的工具，包括一些常用的命令，辅助开发者实现和管理对话机器人。尤其是在有自动化或批量管理的需要时。CLI 完全基于 [Chatopera Node.js SDK](https://github.com/chatopera/chatopera-nodejs-sdk)，开发者也可以参考 SDK 源码，进一步掌握对 SDK 的使用。
-
-[https://github.com/chatopera/chatopera-nodejs-sdk](https://github.com/chatopera/chatopera-nodejs-sdk)
 
 ## 命令行界面 CLI 使用文档
 
@@ -38,6 +20,20 @@ npm install -g @chatopera/sdk
 
 [https://docs.chatopera.com/products/chatbot-platform/integration/cli.html](https://docs.chatopera.com/products/chatbot-platform/integration/cli.html)
 
+Chatopera CLI 是连接 Chatopera 机器人平台，管理和维护资源的工具，包括一些常用的命令，辅助开发者实现和管理对话机器人。尤其是在有自动化或批量管理的需要时。CLI 完全基于 [Chatopera Node.js SDK](https://github.com/chatopera/chatopera-nodejs-sdk)，开发者也可以参考 SDK 源码，进一步掌握对 SDK 的使用。
+
+[https://github.com/chatopera/chatopera-nodejs-sdk](https://github.com/chatopera/chatopera-nodejs-sdk)
+
+## 接口使用文档
+
+```
+npm install @chatopera/sdk --save
+```
+
+快速开始，类接口定义和实例化文档等，参考 [文档中心](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)：
+
+[https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk](https://docs.chatopera.com/products/chatbot-platform/integration/index.html#sdk)
+
 ## Support
 
 技术支持：
@@ -51,6 +47,12 @@ npm install -g @chatopera/sdk
 export DEBUG=chatopera*
 cp sample.env .env # edit .env
 npm run test
+```
+
+运行所有 CLI 命令
+
+```
+./scripts/testcli.all.sh
 ```
 
 ## License
