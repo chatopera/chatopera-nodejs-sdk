@@ -8,6 +8,45 @@ const logger = require("../lib/logger");
 const _ = require("lodash");
 const { sleep } = require("../lib/utils");
 
+async function intentsTrain(payload) {
+  let client = null;
+  if (payload.provider) {
+    client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
+  } else {
+    client = new Bot(payload.clientid, payload.clientsecret);
+  }
+
+  // 执行训练
+  logger.log("Start to train model for dev branch ...");
+
+  let result = await client.command("POST", "/clause/devver/train");
+
+  if (result && result.rc == 0) {
+    let loop = true;
+    while (loop) {
+      // 等待状态
+      await sleep();
+
+      // 检查状态
+      let result2 = await client.command("GET", "/clause/devver/build");
+
+      if (result2 && result2.rc == 0) {
+        logger.log("Train works done successfully.");
+        loop = false;
+      } else if (result2 && result2.rc == 2) {
+        logger.log("Train in progress ...");
+      } else {
+        // errors
+        logger.error("Error happens during training", result2);
+        process.exit(1);
+      }
+    }
+  } else {
+    logger.error("Fails to train model for dev branch", e);
+    process.exit(1);
+  }
+}
+
 async function intentsImport(payload) {
   debug("[intentsImport] payload %j", payload);
   let DATA = null;
@@ -92,35 +131,7 @@ async function intentsImport(payload) {
     }
 
     if (DATA.length > 0) {
-      // 执行训练
-      logger.log("Start to train model for dev branch ...");
-
-      let result = await client.command("POST", "/clause/devver/train");
-
-      if (result && result.rc == 0) {
-        let loop = true;
-        while (loop) {
-          // 等待状态
-          await sleep();
-
-          // 检查状态
-          let result2 = await client.command("GET", "/clause/devver/build");
-
-          if (result2 && result2.rc == 0) {
-            logger.log("Train works done successfully.");
-            loop = false;
-          } else if (result2 && result2.rc == 2) {
-            logger.log("Train in progress ...");
-          } else {
-            // errors
-            logger.error("Error happens during training", result2);
-            process.exit(1);
-          }
-        }
-      } else {
-        logger.error("Fails to train model for dev branch", e);
-        process.exit(1);
-      }
+      await intentsTrain(payload);
     } else {
       logger.log(`No intent records in ${payload.filepath} ...`);
     }
@@ -205,6 +216,7 @@ exports = module.exports = (program) => {
       new Option("-a, --action <value>", "Operation action").choices([
         "import",
         "export",
+        "train",
       ])
     )
     .option(
@@ -260,7 +272,7 @@ exports = module.exports = (program) => {
           );
           process.exit(1);
         }
-      } else {
+      } else if (action == "export") {
         // for export
         if (typeof filepath === "boolean" || !filepath) {
           // generate a file
@@ -276,6 +288,8 @@ exports = module.exports = (program) => {
           logger.error(`${filepath} file exist`);
           process.exit(1);
         }
+      } else {
+        // train
       }
 
       if (!!provider) {
@@ -302,8 +316,11 @@ exports = module.exports = (program) => {
 
       if (action == "import") {
         await intentsImport(payload);
-      } else {
+      } else if (action == "export") {
         await intentsExport(payload);
+      } else {
+        // for train
+        await intentsTrain(payload);
       }
     });
 };
