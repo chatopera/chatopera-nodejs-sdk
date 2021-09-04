@@ -215,6 +215,7 @@ exports = module.exports = (program) => {
    */
   program
     .command("faq")
+    .description("import or export a bot's faqs data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -232,7 +233,7 @@ exports = module.exports = (program) => {
     )
     .option(
       "-f, --filepath [value]",
-      "Export to file path or import with file path"
+      "Export json data to file path or import json data with file path"
     )
     .action(async (cmd) => {
       require("./env.js"); // load environment variables

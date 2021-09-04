@@ -9,6 +9,9 @@ exports = module.exports = (program) => {
    */
   program
     .command("connect")
+    .description(
+      "chat with bot via bot#conversation interface, https://dwz.chatopera.com/SHl7N5"
+    )
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -34,14 +37,8 @@ exports = module.exports = (program) => {
       require("./env.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
-      let {
-        provider,
-        username,
-        clientid,
-        clientsecret,
-        faqBest,
-        faqSugg,
-      } = cmd;
+      let { provider, username, clientid, clientsecret, faqBest, faqSugg } =
+        cmd;
 
       if (typeof clientid === "boolean" || !clientid) {
         clientid = process.env["BOT_CLIENT_ID"];

@@ -160,6 +160,7 @@ exports = module.exports = async (program) => {
    */
   program
     .command("conversation")
+    .description("import or export a bot's conversations data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -175,7 +176,10 @@ exports = module.exports = async (program) => {
         "export",
       ])
     )
-    .option("-f, --filepath [value]", "Conversation Bundle")
+    .option(
+      "-f, --filepath [value]",
+      "Conversation Bundle(.c66 file) path for importing or exporting"
+    )
     .action(async (cmd) => {
       require("./env.js"); // load environment variables
       let { provider, clientid, filepath, clientsecret, action } = cmd;

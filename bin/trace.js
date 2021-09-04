@@ -54,6 +54,7 @@ exports = module.exports = async (program) => {
    */
   program
     .command("trace")
+    .description("tail a bot's conversations logging info")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
