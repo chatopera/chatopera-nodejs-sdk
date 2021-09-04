@@ -48,6 +48,9 @@ async function intentsTrain(payload) {
 }
 
 async function intentsImport(payload) {
+  logger.log(
+    "Notice: import opersation maybe override data for the target bot, should better do an export operation before to backup the previous data."
+  );
   debug("[intentsImport] payload %j", payload);
   let DATA = null;
 

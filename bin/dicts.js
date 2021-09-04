@@ -108,6 +108,9 @@ async function dictsSync(payload) {
 }
 
 async function dictsImport(payload) {
+  logger.log(
+    "Notice: import opersation maybe override data for the target bot, should better do an export operation before to backup the previous data."
+  );
   debug("[dictsImport] payload %j", payload);
   let DATA = null;
 

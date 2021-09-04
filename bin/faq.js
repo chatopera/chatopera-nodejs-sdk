@@ -8,6 +8,9 @@ const logger = require("../lib/logger");
 const _ = require("lodash");
 
 async function faqImport(payload) {
+  logger.log(
+    "Notice: import opersation maybe override data for the target bot, should better do an export operation before to backup the previous data."
+  );
   debug("[faqImport] payload %j", payload);
   let DATA = null;
 

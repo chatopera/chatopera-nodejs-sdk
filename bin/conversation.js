@@ -101,6 +101,9 @@ async function exportConversations(payload) {
  * @param {*} payload
  */
 async function importConversations(payload) {
+  logger.log(
+    "Notice: import opersation maybe override data for the target bot, should better do an export operation before to backup the previous data."
+  );
   let tempc66 = null;
   let isRemoveC66 = false;
   if (fs.existsSync(payload.filepath)) {
