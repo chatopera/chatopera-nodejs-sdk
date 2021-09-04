@@ -21,6 +21,7 @@ async function main() {
   await require("./asr")(program);
   await require("./faq")(program);
   await require("./dicts")(program);
+  await require("./intents")(program);
 
   program.version(require("../package.json").version).parse(process.argv);
 }

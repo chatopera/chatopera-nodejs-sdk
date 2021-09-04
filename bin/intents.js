@@ -6,9 +6,10 @@ const fs = require("fs");
 const moment = require("moment-timezone");
 const logger = require("../lib/logger");
 const _ = require("lodash");
+const { sleep } = require("../lib/utils");
 
-async function faqImport(payload) {
-  debug("[faqImport] payload %j", payload);
+async function intentsImport(payload) {
+  debug("[intentsImport] payload %j", payload);
   let DATA = null;
 
   try {
@@ -24,34 +25,7 @@ async function faqImport(payload) {
     process.exit(1);
   }
 
-  // 检查数据
-  for (let i of DATA) {
-    let { categories, post, replies, enabled, similarQuestions } = i;
-    let pass = !!post;
-
-    if (replies && replies.length > 0) {
-      _.forEach(replies, (r) => {
-        if (r.rtype == "hyperlink") {
-          if (!(r.title && r.url)) {
-            pass = false;
-          }
-        } else {
-          if (!r.content) {
-            pass = false;
-          }
-        }
-      });
-    } else {
-      pass = false;
-    }
-
-    if (!pass) {
-      logger.error("问题和答案必填");
-      process.exit(1);
-    }
-  }
-
-  // upload faq data
+  // upload intent data
   let client = null;
   if (payload.provider) {
     client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
@@ -60,105 +34,104 @@ async function faqImport(payload) {
   }
 
   try {
-    let index = 0;
-    let count = DATA.length;
-    for (let item of DATA) {
+    for (let intent of DATA) {
       try {
-        let {
-          docId,
-          categories: categoryTexts,
-          post,
-          replies,
-          enabled,
-          similarQuestions,
-        } = item;
+        // 首先尝试删除意图
+        let result = await client.command(
+          "DELETE",
+          `/clause/intents/${intent.name}`
+        );
+      } catch (e) {}
 
-        let exts = similarQuestions || [];
+      // 创建意图
+      let result = await client.command("POST", `/clause/intents`, {
+        name: intent.name,
+      });
 
-        _.forEach(replies, (r) => {
-          r.enabled = true;
-        });
+      if (result && result.rc == 0) {
+        // 添加意图槽位
+        if (intent["slots"]) {
+          for (let slot of intent["slots"]) {
+            let body = {
+              intent: {
+                name: intent.name,
+              },
+              slot: {
+                name: slot.name,
+              },
+            };
 
-        const getFaq = async () =>
-          await client.command("GET", `/faq/database/${docId}`);
+            if (slot.dict.builtin) {
+              body["sysdict"] = {
+                name: slot.dict.name,
+              };
+            } else {
+              body["customdict"] = {
+                name: slot.dict.name,
+              };
+            }
 
-        const createFaq = async () =>
-          await client.command("POST", `/faq/database`, {
-            docId,
-            post,
-            replies,
-            categoryTexts,
-            enabled,
-          });
-
-        const updateFaq = async (replyLastUpdate) =>
-          await client.command("PUT", `/faq/database/${docId}`, {
-            post,
-            replies,
-            categoryTexts,
-            enabled,
-            replyLastUpdate,
-          });
-
-        let p = docId
-          ? getFaq().then((result) => {
-              if (result.rc !== 0) {
-                return createFaq();
-              } else {
-                return updateFaq(result.data.replyLastUpdate);
-              }
-            })
-          : createFaq();
-
-        let { data, rc } = await p;
-
-        const cleanExt = async (id) =>
-          await client
-            .command("GET", `/faq/database/${id}/extend`)
-            .then(async ({ data: { rc, data: extend } }) => {
-              if (extend) {
-                for (let e of extend) {
-                  await client.command(
-                    "delete",
-                    `/faq/database/${id}/extend/${e.id}`
-                  );
-                }
-              }
-            });
-
-        if (rc == 0) {
-          await cleanExt(data.id);
-          for (let ext of exts) {
-            await client.command("POST", `/faq/database/${data.id}/extend`, {
-              post: ext,
-            });
+            let result2 = await client.command("POST", `/clause/slots`, body);
           }
         }
 
-        index++;
-
-        if (count > 300) {
-          if (index / 300 == 0) {
-            logger.info(`  Processed data %s/%s: %s...`, index, count, post);
+        // 添加意图说法
+        if (intent["utters"]) {
+          for (let utter of intent["utters"]) {
+            let result3 = await client.command("POST", "/clause/utters", {
+              intent: {
+                name: intent.name,
+              },
+              utter: {
+                utterance: utter["utterance"],
+              },
+            });
           }
-        } else {
-          logger.info(`  Processed data %s/%s: %s ...`, index, count, post);
         }
-      } catch (e) {
-        logger.error(e);
-        logger.error(`问题 ${item.post} Import fails`);
-        process.exit(1);
       }
     }
-    logger.log(`${payload.filepath} 上传成功`);
+
+    if (DATA.length > 0) {
+      // 执行训练
+      logger.log("Start to train model for dev branch ...");
+
+      let result = await client.command("POST", "/clause/devver/train");
+
+      if (result && result.rc == 0) {
+        let loop = true;
+        while (loop) {
+          // 等待状态
+          await sleep();
+
+          // 检查状态
+          let result2 = await client.command("GET", "/clause/devver/build");
+
+          if (result2 && result2.rc == 0) {
+            logger.log("Train works done successfully.");
+            loop = false;
+          } else if (result2 && result2.rc == 2) {
+            logger.log("Train in progress ...");
+          } else {
+            // errors
+            logger.error("Error happens during training", result2);
+            process.exit(1);
+          }
+        }
+      } else {
+        logger.error("Fails to train model for dev branch", e);
+        process.exit(1);
+      }
+    } else {
+      logger.log(`No intent records in ${payload.filepath} ...`);
+    }
   } catch (e) {
     logger.error("Import fails", e);
     process.exit(1);
   }
 }
 
-async function faqExport(payload) {
-  debug("[faqExport] payload %s", payload);
+async function intentsExport(payload) {
+  debug("[intentsExport] payload %s", payload);
   let client = null;
   if (payload.provider) {
     client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
@@ -166,46 +139,49 @@ async function faqExport(payload) {
     client = new Bot(payload.clientid, payload.clientsecret);
   }
 
-  let { data: categoriesMetadata } = await client.command(
-    "GET",
-    "/faq/categories"
-  );
-  let result = await client.command("GET", "/faq/database/export");
+  let result = await client.command("GET", "/clause/intents?limit=9999&page=1");
 
   if (result && result.rc == 0) {
-    let data = _.map(result.data, (r) => {
-      let [docId, categories, enabled, post, replies, ...exts] = r;
+    let data = [];
 
-      if (!_.isArray(categories)) {
-        categories = [];
-      }
+    let intents = result.data;
 
-      let categoryTexts = [];
-      for (let c of categories) {
-        let select = _.find(categoriesMetadata, { value: c });
-        if (select) {
-          categoryTexts.push(select.label);
-          categoriesMetadata = select.children;
-        }
-      }
-
-      return {
-        docId,
-        categories: categoryTexts,
-        enabled: enabled,
-        post: post,
-        replies: _.map(replies, (r) => {
-          delete r.enabled;
-          return r;
-        }),
-        similarQuestions: exts,
+    for (let x of intents) {
+      let intent = {
+        name: x.name,
+        description: x.description,
+        createdate: x.createdate,
+        updatedate: x.updatedate,
+        utters: [],
+        slots: [],
       };
-    });
+      // 获得意图说法
+      let result2 = await client.command(
+        "GET",
+        `/clause/utters?limit=9999&page=1&intentName=${x.name}`
+      );
+      if (result2 && result2.rc == 0) {
+        for (let y of result2.data) delete y["id"];
+        intent["utters"] = result2.data;
+      }
+
+      // 获得意图槽位
+      let result3 = await client.command(
+        "GET",
+        `/clause/slots?limit=9999&page=1&intentName=${x.name}`
+      );
+      if (result3 && result3.rc == 0) {
+        for (let y of result3.data) delete y["id"];
+        intent["slots"] = result3.data;
+      }
+
+      data.push(intent);
+    }
 
     fs.writeFileSync(payload.filepath, JSON.stringify(data, null, 2));
-    logger.log(`${payload.filepath} file saved, data size ${data.length}`);
+    logger.log(`${payload.filepath} file saved, intents size ${data.length}`);
   } else {
-    logger.error("faq export error", JSON.stringify(result));
+    logger.error("intents export error", JSON.stringify(result));
   }
 }
 
@@ -214,8 +190,8 @@ exports = module.exports = (program) => {
    * Connect to a bot and start chat.
    */
   program
-    .command("faq")
-    .description("import or export a bot's faqs data")
+    .command("intents")
+    .description("import or export a bot's intents data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -290,7 +266,7 @@ exports = module.exports = (program) => {
           // generate a file
           filepath = require("path").join(
             process.cwd(),
-            `bot.faqs.${moment()
+            `bot.intents.${moment()
               .tz(process.env.TZ)
               .format("YYYY_MM_DD_HHmmss")}.json`
           );
@@ -325,9 +301,9 @@ exports = module.exports = (program) => {
       };
 
       if (action == "import") {
-        await faqImport(payload);
+        await intentsImport(payload);
       } else {
-        await faqExport(payload);
+        await intentsExport(payload);
       }
     });
 };
