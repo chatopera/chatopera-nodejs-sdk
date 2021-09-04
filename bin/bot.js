@@ -14,12 +14,13 @@ if (!process.env.TZ) process.env.TZ = "Asia/Shanghai";
 
 // main function
 async function main() {
+  await require("./details")(program);
   await require("./connect")(program);
   await require("./conversation")(program);
   await require("./trace")(program);
   await require("./asr")(program);
   await require("./faq")(program);
-  await require("./details")(program);
+  await require("./dicts")(program);
 
   program.version(require("../package.json").version).parse(process.argv);
 }

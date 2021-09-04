@@ -19,6 +19,6 @@ if [ ! -d ./tmp ]; then
     mkdir ./tmp
 fi
 
-INPUT_FILE=./tmp/bot.conversations.c66
+INPUT_FILE=./tmp/bot.dicts.json
 
-./bin/bot.js conversation --action import --filepath $INPUT_FILE
+DEBUG=chatopera:sdk:cli ./bin/bot.js dicts --action import --filepath $INPUT_FILE

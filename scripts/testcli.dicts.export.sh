@@ -19,6 +19,10 @@ if [ ! -d ./tmp ]; then
     mkdir ./tmp
 fi
 
-INPUT_FILE=./tmp/bot.conversations.c66
+OUTPUT_FILE=./tmp/bot.dicts.json
 
-./bin/bot.js conversation --action import --filepath $INPUT_FILE
+if [ -f $OUTPUT_FILE ]; then
+    rm -rf $OUTPUT_FILE
+fi
+
+DEBUG=chatopera:sdk:cli ./bin/bot.js dicts --action export --filepath $OUTPUT_FILE

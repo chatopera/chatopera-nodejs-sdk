@@ -25,7 +25,7 @@ exports = module.exports = async (program) => {
         clientid = process.env["BOT_CLIENT_ID"];
         if (!clientid) {
           throw new Error(
-            "[Error] Invalid clientid, set it with cli param `-c CLIENT_ID` or .env file"
+            "[Error] Invalid clientid, set it with cli param `-c BOT_CLIENT_ID` or .env file"
           );
         }
       }
