@@ -32,11 +32,12 @@
   "dependencies": {
     "@chatopera/q": "^1.0.1",
     "archiver": "^4.0.2",
-    "commander": "^5.1.0",
+    "commander": "^7.2.0",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "inquirer-command-prompt": "0.0.28",
+    "lodash": "^4.17.21",
     "moment-timezone": "^0.5.31",
     "superagent": "^5.3.1"
   },

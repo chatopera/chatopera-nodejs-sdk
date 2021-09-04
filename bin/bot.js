@@ -18,6 +18,7 @@ async function main() {
   await require("./deploy")(program);
   await require("./trace")(program);
   await require("./asr")(program);
+  await require("./faq")(program);
 
   program.version(require("../package.json").version).parse(process.argv);
 }
