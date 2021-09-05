@@ -91,6 +91,13 @@ async function intentsImport(payload) {
       });
 
       if (result && result.rc == 0) {
+        // 添加意图描述
+        if (intent["description"]) {
+          await client.command("PUT", `/clause/intents/${intent.name}`, {
+            description: intent.description,
+          });
+        }
+
         // 添加意图槽位
         if (intent["slots"]) {
           for (let slot of intent["slots"]) {
@@ -100,6 +107,8 @@ async function intentsImport(payload) {
               },
               slot: {
                 name: slot.name,
+                requires: slot.requires,
+                question: slot.question,
               },
             };
 

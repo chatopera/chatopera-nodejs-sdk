@@ -24,12 +24,12 @@ exports = module.exports = (program) => {
       "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .option("-u, --username [value]", "Username to chat with bot")
-    .option("-f, --file <value>", "Target file to recognize, *required.")
+    .option("-f, --filepath <value>", "Target file to recognize, *required.")
     .action(async (cmd) => {
       require("./env.js"); // load environment variables
       debug("asr cmd %o", cmd);
 
-      let { provider, username, clientid, clientsecret, file } = cmd;
+      let { provider, username, clientid, clientsecret, filepath } = cmd;
 
       if (typeof clientid === "boolean" || !clientid) {
         clientid = process.env["BOT_CLIENT_ID"];
@@ -89,7 +89,7 @@ exports = module.exports = (program) => {
         }
 
         let resp = await client.command("POST", "/asr/recognize", {
-          filepath: file, // 语音文件位置，必填
+          filepath: filepath, // 语音文件位置，必填
           nbest: nbest, // 取得最佳识别结果 topN, 默认 5
           pos: pos, // 返回结果是否分词，默认 false
           fromUserId: username, // 记录发送语音的用户唯一标识 ID，可选，默认 无
