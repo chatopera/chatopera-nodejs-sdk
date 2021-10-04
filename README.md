@@ -36,7 +36,10 @@ npm install @chatopera/sdk --save
 
 ## Support
 
-技术支持：
+Issues / 工单：
+[https://github.com/chatopera/docs/issues](https://github.com/chatopera/docs/issues)
+
+Others / 其它：
 [https://docs.chatopera.com/products/chatbot-platform/contract/tech-support.html](https://docs.chatopera.com/products/chatbot-platform/contract/tech-support.html)
 
 ## Contribute
