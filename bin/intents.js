@@ -236,7 +236,7 @@ exports = module.exports = (program) => {
       "Export json data to file path or import json data with file path"
     )
     .action(async (cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
       let { provider, clientid, clientsecret, action, filepath } = cmd;

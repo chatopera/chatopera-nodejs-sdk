@@ -69,7 +69,7 @@ exports = module.exports = async (program) => {
       "Log level to follow, optional, [DEBUG|INFO|WARN|ERROR], default DEBUG"
     )
     .action(async (cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
       let { provider, clientid, clientsecret, logLevel } = cmd;

@@ -26,7 +26,7 @@ exports = module.exports = (program) => {
     .option("-u, --username [value]", "Username to chat with bot")
     .option("-f, --filepath <value>", "Target file to recognize, *required.")
     .action(async (cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       debug("asr cmd %o", cmd);
 
       let { provider, username, clientid, clientsecret, filepath } = cmd;

@@ -184,7 +184,7 @@ exports = module.exports = async (program) => {
       "Conversation Bundle(.c66 file) path for importing or exporting"
     )
     .action(async (cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       let { provider, clientid, filepath, clientsecret, action } = cmd;
 
       if (typeof clientid === "boolean" || !clientid) {

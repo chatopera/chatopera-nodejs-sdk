@@ -18,7 +18,7 @@ exports = module.exports = async (program) => {
       "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .action(async (cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       let { provider, clientid, filepath, clientsecret, action } = cmd;
 
       if (typeof clientid === "boolean" || !clientid) {

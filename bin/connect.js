@@ -35,7 +35,7 @@ exports = module.exports = (program) => {
       "FAQ suggest reply threshold, optional, default 0.6"
     )
     .action((cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
       let { provider, username, clientid, clientsecret, faqBest, faqSugg } =
