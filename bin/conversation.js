@@ -37,7 +37,7 @@ async function exportConversations(payload) {
 
         // a path for store files and then compress as c66
         let ts = utils.getTimestamp();
-        let tempc66 = path.join(tempdir, data.name + "." + ts);
+        let tempc66 = path.join(tempdir, data.name.replace(/\*/g, "_") + "." + ts);
 
         fs.mkdirSync(tempc66, {
           recursive: true,
