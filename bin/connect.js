@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
 const DEFAULT_USER = "commandline";
+const logger = require("../lib/logger");
 
 exports = module.exports = (program) => {
   /**
@@ -9,6 +10,9 @@ exports = module.exports = (program) => {
    */
   program
     .command("connect")
+    .description(
+      "chat with bot via bot#conversation interface, https://dwz.chatopera.com/SHl7N5"
+    )
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -31,31 +35,26 @@ exports = module.exports = (program) => {
       "FAQ suggest reply threshold, optional, default 0.6"
     )
     .action((cmd) => {
-      require("./env.js"); // load environment variables
+      require("../lib/loadenv.js"); // load environment variables
       debug("connect cmd %o", cmd);
 
-      let {
-        provider,
-        username,
-        clientid,
-        clientsecret,
-        faqBest,
-        faqSugg,
-      } = cmd;
+      let { provider, username, clientid, clientsecret, faqBest, faqSugg } =
+        cmd;
 
       if (typeof clientid === "boolean" || !clientid) {
         clientid = process.env["BOT_CLIENT_ID"];
         if (!clientid) {
-          throw new Error(
-            "[Error] Invalid clientid, set it with cli param `-c CLIENT_ID` or .env file"
+          logger.error(
+            "[Error] Invalid clientid, set it with cli param `-c BOT_CLIENT_ID` or .env file"
           );
+          process.exit(1);
         }
       }
 
       if (typeof clientsecret === "boolean" || !clientsecret) {
         clientsecret = process.env["BOT_CLIENT_SECRET"];
         if (!clientsecret) {
-          console.log("[WARN] client secret is not configured.");
+          logger.log("[WARN] client secret is not configured.");
         }
       }
 
@@ -72,12 +71,12 @@ exports = module.exports = (program) => {
         faqSugg = Number(faqSugg);
 
         if (faqBest == 0) {
-          throw new Error(
+          logger.error(
             "WARN: faqBest must larger then 0, use default value instead."
           );
         }
       } catch (e) {
-        console.log("Invalid --faq-best, --faq-sugg value", e);
+        logger.log("Invalid --faq-best, --faq-sugg value", e);
       }
 
       if (!faqBest) {
@@ -90,29 +89,32 @@ exports = module.exports = (program) => {
 
       try {
         if (faqBest > 1 || faqBest <= 0) {
-          throw new Error("--faq-best should range in [0,1]");
+          logger.error("--faq-best should range in [0,1]");
+          process.exit(1);
         }
 
         if (faqSugg > 1 || faqSugg <= 0) {
-          throw new Error("--faq-sugg should range in [0,1]");
+          logger.error("--faq-sugg should range in [0,1]");
+          process.exit(1);
         }
 
         if (faqBest <= faqSugg) {
-          throw new Error("faq-best must larger then faq-sugg");
+          logger.error("faq-best must larger then faq-sugg");
+          process.exit(1);
         }
       } catch (e) {
-        console.log("Invalid --faq-best, --faq-sugg value", e);
+        logger.log("Invalid --faq-best, --faq-sugg value", e);
         process.exit(1);
       }
 
       if (!!provider) {
-        console.log(
+        logger.log(
           ">> connect to %s, clientId %s, secret *** ...",
           provider,
           clientid
         );
       } else {
-        console.log(
+        logger.log(
           ">> connect to https://bot.chatopera.com, clientId %s, secret *** ...",
           clientid
         );
@@ -125,7 +127,7 @@ exports = module.exports = (program) => {
         provider
       );
 
-      console.log(
+      logger.log(
         "[connect] FAQ Best Reply Threshold %s, Suggest Reply Threshold %s",
         faqBest,
         faqSugg
@@ -176,9 +178,9 @@ exports = module.exports = (program) => {
                   faqSuggReplyThreshold: faqSugg,
                 })
                 .then((res) => {
-                  console.log(JSON.stringify(res, null, " "));
+                  logger.log(JSON.stringify(res, null, " "));
                   if (res && res.rc === 0) {
-                    console.log("Bot:", res.data.string);
+                    logger.log("Bot:", res.data.string);
                   }
                 })
                 .catch(console.error)
