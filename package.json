@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "低代码或无代码方式定制智能对话机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
@@ -33,6 +33,7 @@
     "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "inquirer-command-prompt": "0.0.28",
+    "js-yaml": "^4.1.0",
     "moment-timezone": "^0.5.31",
     "superagent": "^5.3.1"
   },
