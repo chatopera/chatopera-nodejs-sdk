@@ -77,77 +77,38 @@ async function intentsImport(payload) {
   }
 
   try {
-    for (let intent of DATA) {
-      try {
-        // 首先尝试删除意图
-        let result = await client.command(
-          'DELETE',
-          `/clause/intents/${intent.name}`
-        );
-      } catch (e) {}
-
-      // 创建意图
-      let result = await client.command('POST', `/clause/intents`, {
-        name: intent.name,
-      });
-
-      if (result && result.rc == 0) {
-        // 添加意图描述
-        if (intent['description']) {
-          await client.command('PUT', `/clause/intents/${intent.name}`, {
-            description: intent.description,
-          });
+    if (DATA.length > 0) {
+      for (const intent of DATA) {
+        if (!/^[0-9a-zA-Z_]+$/.test(intent.name)) {
+          logger.error(`Invalid intent name ${intent.name}`);
+          return;
         }
 
-        // 添加意图槽位
-        if (intent['slots']) {
-          for (let slot of intent['slots']) {
-            let body = {
-              intent: {
-                name: intent.name,
-              },
-              slot: {
-                name: slot.name,
-                requires: slot.requires,
-                question: slot.question,
-              },
-            };
-
-            if (slot.dict.builtin) {
-              body['sysdict'] = {
-                name: slot.dict.name,
-              };
-            } else {
-              body['customdict'] = {
-                name: slot.dict.name,
-              };
-            }
-
-            let result2 = await client.command('POST', `/clause/slots`, body);
-          }
-        }
-
-        // 添加意图说法
-        if (intent['utters']) {
-          for (let utter of intent['utters']) {
-            try {
-              let result3 = await client.command('POST', '/clause/utters', {
-                intent: {
-                  name: intent.name,
-                },
-                utter: {
-                  utterance: utter['utterance'],
-                },
-              });
-            } catch (e) {
-              logger.error(`Import utterance ${utter['utterance']} error`);
+        if (_.isArray(intent.slots)) {
+          for (let slot of intent.slots) {
+            if (
+              !(
+                /^[0-9a-zA-Z_]+$/.test(slot.name) &&
+                slot.dict &&
+                slot.dict.name
+              )
+            ) {
+              logger.error(`Invalid slot name ${slot.name} of dict`);
+              return;
             }
           }
         }
       }
-    }
 
-    if (DATA.length > 0) {
+      let result = await client.command('POST', `/clause/intents/import`, {
+        intents: DATA,
+      });
+
+      if (result.rc != 0) {
+        logger.error(`Import  fails`, result.error);
+        return;
+      }
+
       await intentsTrain(payload);
     } else {
       logger.log(`No intent records in ${payload.filepath} ...`);
