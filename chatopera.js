@@ -1,7 +1,5 @@
 const debug = require('debug')('chatopera:sdk:chatopera');
 const request = require('superagent');
-const utils = require('./lib/utils');
-
 const BASE_PATH = '/api/v1';
 
 /**
@@ -87,8 +85,6 @@ class Chatopera {
       }
     );
   }
-
-  static utils = utils;
 }
 
 module.exports = exports = Chatopera;
