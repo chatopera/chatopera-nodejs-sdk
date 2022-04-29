@@ -6,6 +6,7 @@ const fs = require("fs");
 const moment = require("moment-timezone");
 const logger = require("../lib/logger");
 const _ = require("lodash");
+const { sleep } = require("../lib/utils");
 
 async function faqImport(payload) {
   logger.log(
@@ -105,12 +106,12 @@ async function faqImport(payload) {
 
         let p = docId
           ? getFaq().then((result) => {
-              if (result.rc !== 0) {
-                return createFaq();
-              } else {
-                return updateFaq(result.data.replyLastUpdate);
-              }
-            })
+            if (result.rc !== 0) {
+              return createFaq();
+            } else {
+              return updateFaq(result.data.replyLastUpdate);
+            }
+          })
           : createFaq();
 
         let { data, rc } = await p;
@@ -212,13 +213,81 @@ async function faqExport(payload) {
   }
 }
 
+/**
+ * 删除所有问答对数据
+ * @param {*} payload 
+ */
+async function faqDropAll(payload) {
+  debug("[faqDropAll] payload %s ...", payload);
+  let client = null;
+  if (payload.provider) {
+    client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
+  } else {
+    client = new Bot(payload.clientid, payload.clientsecret);
+  }
+
+  let { data: categoriesMetadata } = await client.command(
+    "GET",
+    "/faq/categories"
+  );
+
+  console.log("Fetching data ...");
+  let result = await client.command("GET", "/faq/database/export");
+
+  var counter = 0;
+
+  console.log("Dropping data ...");
+  if (result && result.rc == 0) {
+    var total = result.data.length;
+    console.log("Total records %d", total)
+    _.map(result.data, async (r) => {
+      let [docId, categories, enabled, post, replies, ...exts] = r;
+
+      if (!_.isArray(categories)) {
+        categories = [];
+      }
+
+      let categoryTexts = [];
+      for (let c of categories) {
+        let select = _.find(categoriesMetadata, { value: c });
+        if (select) {
+          categoryTexts.push(select.label);
+          categoriesMetadata = select.children;
+        }
+      }
+
+      await client.command("DELETE", `/faq/database/${docId}`);
+      await sleep(1);
+      if(counter++ % 200 == 0){
+          console.log("Dropping data records, done %d/%d ...", counter, total)
+      }
+
+      // return {
+      //   docId,
+      //   categories: categoryTexts,
+      //   enabled: enabled,
+      //   post: post,
+      //   replies: _.map(replies, (r) => {
+      //     delete r.enabled;
+      //     return r;
+      //   }),
+      //   similarQuestions: exts,
+      // };
+    });
+  } else {
+    logger.error("faq dropall error", JSON.stringify(result));
+  }
+}
+
+
+
 exports = module.exports = (program) => {
   /**
    * Connect to a bot and start chat.
    */
   program
     .command("faq")
-    .description("import or export a bot's faqs data")
+    .description("import, export or drop all bot's faqs data")
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
       "-s, --clientsecret [value]",
@@ -232,6 +301,7 @@ exports = module.exports = (program) => {
       new Option("-a, --action <value>", "Operation action").choices([
         "import",
         "export",
+        "dropall"
       ])
     )
     .option(
@@ -287,7 +357,7 @@ exports = module.exports = (program) => {
           );
           process.exit(1);
         }
-      } else {
+      } else if (action == "export") {
         // for export
         if (typeof filepath === "boolean" || !filepath) {
           // generate a file
@@ -303,6 +373,14 @@ exports = module.exports = (program) => {
           logger.error(`${filepath} file exist`);
           process.exit(1);
         }
+      } else if (action == "dropall") {
+        console.log("[CAUTION] this will drop all the faq data and unrecoverable, the job would start in 5 seconds, cancel this operation in 5s by Ctrl + C.");
+        console.log("【注意】该操作将会删除 BOT 知识库问答对数据，此操作不可以，任务会在 5 秒后开始，5秒内可按 Ctrl + C 取消.");
+        await sleep(5);
+        console.log("Start to drop all FAQ data ...")
+      } else {
+        logger.error(`Unexpected action ${action}`)
+        process.exit(2);
       }
 
       if (!!provider) {
@@ -329,8 +407,10 @@ exports = module.exports = (program) => {
 
       if (action == "import") {
         await faqImport(payload);
-      } else {
+      } else if (action == "export") {
         await faqExport(payload);
+      } else if (action == "dropall") {
+        await faqDropAll(payload);
       }
     });
 };
