@@ -30,7 +30,7 @@ exports = module.exports = (program) => {
   program
     .command("env")
     .description(
-      "chat with bot via bot#conversation interface, https://dwz.chatopera.com/SHl7N5"
+      "chat with bot via bot#conversation interface, https://dwz.chatopera.com/T0CZ0R"
     )
     .option("-fp, --folderpath [value]", "Path to generate .env file, default is process.cwd()")
     .action(async (cmd) => {
@@ -52,6 +52,8 @@ exports = module.exports = (program) => {
         "BOT_PROVIDER=https://bot.chatopera.com",
         "BOT_CLIENT_ID=",
         "BOT_CLIENT_SECRET=",
+        "BOT_THRESHOLD_FAQ_BEST_REPLY=0.8",
+        "BOT_THRESHOLD_FAQ_SUGG_REPLY=0.6",
         "BOT_ACCESS_TOKEN="];
 
       if(fs.existsSync(envfilepath)){

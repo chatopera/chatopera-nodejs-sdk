@@ -80,11 +80,29 @@ exports = module.exports = (program) => {
       }
 
       if (!faqBest) {
-        faqBest = 0.8;
+        if (process.env["BOT_THRESHOLD_FAQ_BEST_REPLY"]) {
+          try {
+            faqBest = Number(process.env["BOT_THRESHOLD_FAQ_BEST_REPLY"])
+          } catch (e) {
+            console.log("Invalid ENV BOT_THRESHOLD_FAQ_BEST_REPLY", process.env["BOT_THRESHOLD_FAQ_BEST_REPLY"])
+          }
+        }
+
+        if (!faqBest)
+          faqBest = 0.8;
       }
 
       if (!faqSugg) {
-        faqSugg = 0.6;
+        if (process.env["BOT_THRESHOLD_FAQ_SUGG_REPLY"]) {
+          try {
+            faqSugg = Number(process.env["BOT_THRESHOLD_FAQ_SUGG_REPLY"])
+          } catch (e) {
+            console.log("Invalid ENV BOT_THRESHOLD_FAQ_SUGG_REPLY", process.env["BOT_THRESHOLD_FAQ_SUGG_REPLY"])
+          }
+        }
+
+        if (!faqSugg)
+          faqSugg = 0.6;
       }
 
       try {
