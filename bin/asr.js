@@ -12,7 +12,7 @@ exports = module.exports = (program) => {
   program
     .command("asr")
     .description(
-      "request Chatopera ASR API, https://docs.chatopera.com/products/chatbot-platform/integration/chatbot/asr.html"
+      "request Chatopera ASR API, https://docs.chatopera.com/products/chatbot-platform/howto-guides/asr-request.html"
     )
     .option("-c, --clientid [value]", "ClientId of the bot")
     .option(
