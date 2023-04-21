@@ -48,12 +48,12 @@ exports = module.exports = (program) => {
       }
 
       let envfilepath = path.join(folderpath, ENV_FILE);
-      let defaults = ["# Chatopera Cloud Service",
+      let defaults = ["# Chatopera BOT Platform",
         "BOT_PROVIDER=https://bot.chatopera.com",
         "BOT_CLIENT_ID=",
         "BOT_CLIENT_SECRET=",
-        "BOT_THRESHOLD_FAQ_BEST_REPLY=0.8",
-        "BOT_THRESHOLD_FAQ_SUGG_REPLY=0.6",
+        "BOT_THRESHOLD_FAQ_BEST_REPLY=0.9",
+        "BOT_THRESHOLD_FAQ_SUGG_REPLY=0",
         "BOT_ACCESS_TOKEN="];
 
       if(fs.existsSync(envfilepath)){
@@ -61,12 +61,12 @@ exports = module.exports = (program) => {
         for(let x of defaults){
             console.log(`   ${x}`);
         }
-        console.log("Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/cli-install-config.html")
+        console.log("Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/integration/cli-install-config.html")
         process.exit(0);
       }
 
       await readlineq(envfilepath, defaults.join("\n"));
-      logger.info(`.env file[${envfilepath}] is generated. Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/cli-install-config.html`)
+      logger.info(`.env file[${envfilepath}] is generated. Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/integration/cli-install-config.html`)
     });
 };
 
