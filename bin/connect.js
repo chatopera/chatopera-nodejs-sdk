@@ -76,7 +76,7 @@ exports = module.exports = (program) => {
           );
         }
       } catch (e) {
-        logger.log("Invalid --faq-best, --faq-sugg value", e);
+        logger.log("[WARN] Invalid --faq-best, --faq-sugg value, params with load from ENV or use defalut", e);
       }
 
       if (!faqBest) {
@@ -92,8 +92,8 @@ exports = module.exports = (program) => {
           faqBest = 0.8;
       }
 
-      if (!faqSugg) {
-        if (process.env["BOT_THRESHOLD_FAQ_SUGG_REPLY"]) {
+      if (faqSugg == null || faqSugg == undefined || Number.isNaN(faqSugg)) {
+        if ("BOT_THRESHOLD_FAQ_SUGG_REPLY" in process.env) {
           try {
             faqSugg = Number(process.env["BOT_THRESHOLD_FAQ_SUGG_REPLY"])
           } catch (e) {
@@ -101,17 +101,17 @@ exports = module.exports = (program) => {
           }
         }
 
-        if (!faqSugg)
+        if (faqSugg == null || faqSugg == undefined || Number.isNaN(faqSugg))
           faqSugg = 0.6;
       }
 
       try {
         if (faqBest > 1 || faqBest <= 0) {
-          logger.error("--faq-best should range in [0,1]");
+          logger.error("--faq-best should range in (0,1]");
           process.exit(1);
         }
 
-        if (faqSugg > 1 || faqSugg <= 0) {
+        if (faqSugg > 1 || faqSugg < 0) {
           logger.error("--faq-sugg should range in [0,1]");
           process.exit(1);
         }
