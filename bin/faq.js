@@ -258,8 +258,8 @@ async function faqDropAll(payload) {
 
       await client.command("DELETE", `/faq/database/${docId}`);
       await sleep(1);
-      if(counter++ % 200 == 0){
-          console.log("Dropping data records, done %d/%d ...", counter, total)
+      if (counter++ % 200 == 0) {
+        console.log("Dropping data records, done %d/%d ...", counter, total)
       }
 
       // return {
@@ -279,7 +279,59 @@ async function faqDropAll(payload) {
   }
 }
 
+/**
+ * 重新训练，re-index FAQ 知识库
+ * @param {*} payload 
+ */
+async function faqTrain(payload) {
+  console.log("Start to train FAQ ...");
+  let client = null;
+  if (payload.provider) {
+    client = new Bot(payload.clientid, payload.clientsecret, payload.provider);
+  } else {
+    client = new Bot(payload.clientid, payload.clientsecret);
+  }
 
+  let result = await client.command("POST", `/faq/sync/customdicts`);
+
+  if (result && result.rc == 0) {
+    // train is started, wait for it done.
+    console.log("FAQ Training is running. Wait for a moment, CLI will exit after the train job is done ...");
+    let waitForDone = true;
+    while (waitForDone) {
+      await sleep(5);
+      console.log("  Still wait ...");
+      result = await client.command("GET", `/status`);
+      if (result && result.rc == 0) {
+        if (result.data && result.data.status) {
+          if (result.data.status.reindex == 0) {
+            console.log("知识库索引更新成功");
+            waitForDone = false;
+          } else if (result.data.status.reindex == 2) {
+            console.log("[WARN] 知识库或自定义词典变更，无法继续同步，可返回后重新提交。");
+            waitForDone = false;
+          } else if (result.data.status.reindex == 3) {
+            // other problem
+            console.log(result.data.status.reindexMsg);
+            waitForDone = false;
+            process.exit(3);
+          }
+        } else {
+          waitForDone = false;
+          console.log("Error happens, unexpected data, no status data present, contact the service (https://dwz.chatopera.com/S72kR1).");
+          process.exit(1);
+        }
+      } else {
+        waitForDone = false;
+        console.log("Error happens, unexpected status for bot, contact the service (https://dwz.chatopera.com/S72kR1).");
+        process.exit(2);
+      }
+    }
+  } else {
+    console.log(">> ERROR FAQ train is not started, contact the service (https://dwz.chatopera.com/S72kR1).");
+    process.exit(3);
+  }
+}
 
 exports = module.exports = (program) => {
   /**
@@ -299,9 +351,10 @@ exports = module.exports = (program) => {
     )
     .addOption(
       new Option("-a, --action <value>", "Operation action").choices([
-        "import",
-        "export",
-        "dropall"
+        "train", // 重新训练知识库：完成同步自定义词典, etc.
+        "import", // 导入知识库
+        "export", // 导出知识库
+        "dropall", // 清空知识库问答对
       ])
     )
     .option(
@@ -337,7 +390,7 @@ exports = module.exports = (program) => {
 
       if (action == undefined) {
         logger.error(
-          "error: option '-a, --action <value>' argument is invalid. Allowed choices are import, export."
+          "error: option '-a, --action <value>' argument is invalid. Allowed choices are import, export, train, dropall."
         );
         process.exit(1);
       } else if (action == "import") {
@@ -377,7 +430,9 @@ exports = module.exports = (program) => {
         console.log("[CAUTION] this will drop all the faq data and unrecoverable, the job would start in 5 seconds, cancel this operation in 5s by Ctrl + C.");
         console.log("【注意】该操作将会删除 BOT 知识库问答对数据，此操作不可以，任务会在 5 秒后开始，5秒内可按 Ctrl + C 取消.");
         await sleep(5);
-        console.log("Start to drop all FAQ data ...")
+        console.log("Start to drop all FAQ data ...");
+      } else if (action == "train") {
+        // continue
       } else {
         logger.error(`Unexpected action ${action}`)
         process.exit(2);
@@ -411,6 +466,8 @@ exports = module.exports = (program) => {
         await faqExport(payload);
       } else if (action == "dropall") {
         await faqDropAll(payload);
+      } else if (action == "train") {
+        await faqTrain(payload);
       }
     });
 };

@@ -28,7 +28,7 @@ const print = function (method, path, payload, resp) {
   );
 };
 
-const moduleName = "知识库";
+const moduleName = "FAQ 知识库";
 
 test.before(async (t) => {
   const chatbot = new Chatbot(clientId, clientSecret, botProvider);

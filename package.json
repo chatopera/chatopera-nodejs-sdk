@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.8.12",
+  "version": "2.9.1",
   "description": "重新定义聊天机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
