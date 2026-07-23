@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Copyright (2020-2021) Chatopera Inc. <https://www.chatopera.com>. All rights reserved.
+ * Copyright (2020-2026) Chatopera Inc. <https://www.chatopera.com>. All rights reserved.
  * This software and related documentation are provided under a license agreement containing
  * restrictions on use and disclosure and are protected by intellectual property laws.
  * Except as expressly permitted in your license agreement or allowed by law, you may not use,
@@ -24,6 +24,7 @@ async function main() {
   await require("./dicts")(program);
   await require("./intents")(program);
   await require("./rag")(program);
+  await require("./project")(program);
 
   program.version(require("../package.json").version).parse(process.argv);
 }
