@@ -27,11 +27,11 @@ exports = module.exports = (program) => {
       "Chatopera Bot Service URL, optional, default https://bot.chatopera.com"
     )
     .option(
-      "-fb, --faq-best [value]",
+      "--faq-best [value]",
       "FAQ best reply threshold, optional, default 0.8"
     )
     .option(
-      "-fs, --faq-sugg [value]",
+      "--faq-sugg [value]",
       "FAQ suggest reply threshold, optional, default 0.6"
     )
     .action((cmd) => {

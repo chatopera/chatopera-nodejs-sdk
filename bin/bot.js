@@ -8,7 +8,7 @@
  * publish, or display any part, in any form, or by any means. Reverse engineering, disassembly,
  * or decompilation of this software, unless required by law for interoperability, is prohibited.
  */
-const program = require("commander");
+const {program} = require("commander");
 const fs = require("fs");
 
 if (!process.env.TZ) process.env.TZ = "Asia/Shanghai";
@@ -20,7 +20,6 @@ async function main() {
   await require("./connect")(program);
   await require("./conversation")(program);
   await require("./trace")(program);
-  await require("./asr")(program);
   await require("./faq")(program);
   await require("./dicts")(program);
   await require("./intents")(program);

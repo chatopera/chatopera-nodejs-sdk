@@ -32,23 +32,21 @@
   },
   "dependencies": {
     "@chatopera/q": "^1.0.1",
-    "@chatopera/sdk": "^2.8.7",
     "archiver": "^4.0.2",
-    "commander": "^7.2.0",
-    "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
-    "inquirer": "^7.3.3",
-    "inquirer-command-prompt": "0.0.28",
-    "joi": "^17.4.2",
-    "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21",
-    "moment-timezone": "^0.5.31",
+    "commander": "^15.0.0",
+    "debug": "^4.4.3",
+    "dotenv": "^17.4.2",
+    "inquirer": "^14.0.2",
+    "inquirer-command-prompt": "0.1.0",
+    "joi": "^18.2.3",
+    "js-yaml": "^5.2.1",
+    "lodash": "^4.18.1",
+    "moment-timezone": "^0.6.3",
     "readlineq": "^2.0.3",
-    "superagent": "^5.3.1"
+    "superagent": "^10.3.0"
   },
   "devDependencies": {
-    "@chatopera/wavefile": "^11.0.2",
-    "ava": "^3.10.1"
+    "ava": "^8.0.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

@@ -32,7 +32,7 @@ exports = module.exports = (program) => {
     .description(
       "chat with bot via bot#conversation interface, https://dwz.chatopera.com/T0CZ0R"
     )
-    .option("-fp, --folderpath [value]", "Path to generate .env file, default is process.cwd()")
+    .option("--folderpath [value]", "Path to generate .env file, default is process.cwd()")
     .action(async (cmd) => {
 
       let { folderpath } =
