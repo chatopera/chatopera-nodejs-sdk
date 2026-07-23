@@ -13,9 +13,10 @@
   "keywords": [
     "chatopera",
     "chatbot",
+    "agent",
     "cli",
     "知识库",
-    "智能对话机器人",
+    "智能体",
     "聊天机器人",
     "多轮对话",
     "意图识别"
@@ -32,7 +33,7 @@
   },
   "dependencies": {
     "@chatopera/q": "^1.0.1",
-    "archiver": "^4.0.2",
+    "archiver": "^8.0.0",
     "commander": "^15.0.0",
     "debug": "^4.4.3",
     "dotenv": "^17.4.2",
