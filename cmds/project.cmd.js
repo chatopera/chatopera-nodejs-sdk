@@ -70,7 +70,6 @@ exports = module.exports = async (program) => {
                 accessToken = process.env["BOT_ACCESS_TOKEN"];
             }
 
-
             if (["push", "pull"].includes(action)) {
                 // 对于 push 和 pull, 必须有 clientId 和 secret
                 if (typeof clientid === "boolean" || !clientid) {
@@ -117,10 +116,6 @@ exports = module.exports = async (program) => {
                 throw new InvalidArgumentError("action is illegal.")
             }
 
-            // Call handler for specific job
-            let payload = { provider, clientid, clientsecret, accessToken, primaryLanguage, botName };
-
-
             /**
              * Checks before run
              */
@@ -137,6 +132,8 @@ exports = module.exports = async (program) => {
             /**
              * Run job
              */
+            // Call handler for specific job
+            let payload = { provider, clientid, clientsecret, accessToken, primaryLanguage, botName, projectDir: process.cwd() };
             let result = await handler[action].call(null, payload);
 
             /**
@@ -145,6 +142,5 @@ exports = module.exports = async (program) => {
             if (action == "create") {
                 // TODO 优化 .env 文件，添加 clientId, secret 信息
             }
-
         });
 };
