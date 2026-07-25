@@ -4,9 +4,9 @@ const { Option } = require("commander");
 const Bot = require("../index.js").Chatbot;
 const fs = require("fs");
 const moment = require("moment-timezone");
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 const _ = require("lodash");
-const { sleep } = require("../lib/utils");
+const { sleep } = require("../lib/utils.js");
 
 
 /**
@@ -30,7 +30,7 @@ async function ragQuery(payload) {
 
     let resp = await client.command(method, path, requestBody);
 
-    if(resp.rc == 0){
+    if (resp.rc == 0) {
         console.log("Bot's RAG Reply think>>", resp.data.think);
         console.log("Bot's RAG Reply content>>", resp.data.content);
         console.log("Bot's RAG Reply is fallback>>", resp.data.is_logic_fallback);
@@ -62,7 +62,7 @@ exports = module.exports = (program) => {
         .option(
             "-t, --text [value]",
             "Query Text to interact with RAG"
-          )
+        )
         .action(async (cmd) => {
             require("../lib/loadenv.js"); // load environment variables
             debug("connect cmd %o", cmd);

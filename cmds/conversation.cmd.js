@@ -1,11 +1,11 @@
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
-const tempdir = require("../lib/tempdir");
+const tempdir = require("../lib/tempdir.js");
 const path = require("path");
 const fs = require("fs");
 const utils = require("../lib/utils.js");
 const { Option } = require("commander");
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 const moment = require("moment-timezone");
 const readlineq = require("readlineq");
 
@@ -48,7 +48,7 @@ async function exportConversations(payload) {
         for (let x of data.plugin) {
           plugin.push(x + "\n");
         }
-        await readlineq(path.join(tempc66, "plugin.js"), plugin);
+        readlineq(path.join(tempc66, "plugin.js"), plugin);
         delete data["plugin"];
 
         // conversations
@@ -59,7 +59,7 @@ async function exportConversations(payload) {
             lines.push(y + "\n");
           }
 
-          await readlineq(
+          readlineq(
             path.join(tempc66, data.primaryLanguage + "." + x.name + ".ms"),
             lines
           );

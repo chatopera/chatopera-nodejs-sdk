@@ -4,7 +4,7 @@ const { Option } = require("commander");
 const Bot = require("../index.js").Chatbot;
 const fs = require("fs");
 const moment = require("moment-timezone");
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 const _ = require("lodash");
 const { sleep } = require("../lib/utils.js");
 

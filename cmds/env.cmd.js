@@ -56,16 +56,16 @@ exports = module.exports = (program) => {
         "BOT_THRESHOLD_FAQ_SUGG_REPLY=0",
         "BOT_ACCESS_TOKEN="];
 
-      if(fs.existsSync(envfilepath)){
+      if (fs.existsSync(envfilepath)) {
         logger.warn(`${envfilepath} file exist, append following lines if needed.`);
-        for(let x of defaults){
-            console.log(`   ${x}`);
+        for (let x of defaults) {
+          console.log(`   ${x}`);
         }
         console.log("Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/integration/cli-install-config.html")
         process.exit(0);
       }
 
-      await readlineq(envfilepath, defaults.join("\n"));
+      readlineq(envfilepath, defaults.join("\n"));
       logger.info(`.env file[${envfilepath}] is generated. Get details about configurations, https://docs.chatopera.com/products/chatbot-platform/howto-guides/integration/cli-install-config.html`)
     });
 };

@@ -8,23 +8,23 @@
  * publish, or display any part, in any form, or by any means. Reverse engineering, disassembly,
  * or decompilation of this software, unless required by law for interoperability, is prohibited.
  */
-const {program} = require("commander");
+const { program } = require("commander");
 const fs = require("fs");
 
 if (!process.env.TZ) process.env.TZ = "Asia/Shanghai";
 
 // main function
 async function main() {
-  await require("./env")(program);
-  await require("./details")(program);
-  await require("./connect")(program);
-  await require("./conversation")(program);
-  await require("./trace")(program);
-  await require("./faq")(program);
-  await require("./dicts")(program);
-  await require("./intents")(program);
-  await require("./rag")(program);
-  await require("./project")(program);
+  await require("../cmds/env.cmd")(program);
+  await require("../cmds/details.cmd")(program);
+  await require("../cmds/connect.cmd")(program);
+  await require("../cmds/conversation.cmd")(program);
+  await require("../cmds/trace.cmd")(program);
+  await require("../cmds/faq.cmd")(program);
+  await require("../cmds/dicts.cmd")(program);
+  await require("../cmds/intents.cmd")(program);
+  await require("../cmds/rag.cmd")(program);
+  await require("../cmds/project.cmd")(program);
 
   program.version(require("../package.json").version).parse(process.argv);
 }

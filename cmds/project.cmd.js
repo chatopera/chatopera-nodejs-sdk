@@ -1,9 +1,10 @@
 const debug = require("debug")("chatopera:sdk:cli:project");
 const Bot = require("../index.js").Chatbot;
 const { InvalidArgumentError, Option } = require("commander");
-const logger = require("../lib/logger");
-const { DEFAULT_BOT_PROVIDER } = require("../lib/utils.js");
+const logger = require("../lib/logger.js");
+const { DEFAULT_BOT_PROVIDER, DEFAULT_BOT_LANG } = require("../lib/utils.js");
 const handler = require("../handlers/project.handler.js");
+const { parseEnvFile, getCurrentEnvFile } = require("../lib/loadenv.js"); // load environment variables
 
 exports = module.exports = async (program) => {
     /**
@@ -33,11 +34,11 @@ exports = module.exports = async (program) => {
             ])
         )
         .option(
-            "--bot-name [value]",
+            "--name [value]",
             "Name of chatbot"
         )
         .addOption(
-            new Option("--bot-lang [value]", "Bot's primary language").choices([
+            new Option("--lang [value]", "Bot's primary language").choices([
                 "zh_CN", // 简体中文
                 "zh_TW", // 繁体中文
                 "en_US", // 英语
@@ -46,8 +47,7 @@ exports = module.exports = async (program) => {
             ])
         )
         .action(async (cmd) => {
-            require("../lib/loadenv.js"); // load environment variables
-            let { provider, clientid, clientsecret, accessToken, action, botName, botLang } = cmd;
+            let { provider, clientid, clientsecret, accessToken, action, name: botName, lang: primaryLanguage } = cmd;
 
             // 检查是否有 bot provider 和 accessToken
             if (typeof provider === "boolean" || !provider) {
@@ -89,22 +89,62 @@ exports = module.exports = async (program) => {
                         logger.log("[WARN] client secret is not configured.");
                     }
                 }
-            } else if (["create"].includes(action)) {
+            } else if (/*创建新的项目*/["create"].includes(action)) {
                 // 对于 push 和 pull, 必须有 botProvider 和 accessToken
                 // 如果恰好有了 clientid 和 secret 将会被忽略
-                debug("acc", accessToken, "provider", provider)
+                debug("[cli] params: accessToken", accessToken, "provider", provider)
                 if ((!accessToken) || (!provider)) {
                     throw new InvalidArgumentError(`Invalid argvs for ${action} action, accessToken and botProvider are required.`);
                 }
 
                 // 读取 bot lang, bot name.
-                // TODO
+                if (typeof botName === "boolean" || !botName) {
+                    botName = process.env["BOT_NAME"];
+                    if (!botName) {
+                        logger.error("[ERROR] name is not passed in CLI or defined as BOT_NAME in ENV.");
+                        throw new InvalidArgumentError("Invalid args, `name` is required.")
+                    }
+                }
+
+                if (typeof primaryLanguage === "boolean" || !primaryLanguage) {
+                    primaryLanguage = process.env["BOT_PRIMARY_LANGUAGE"];
+                    if (!primaryLanguage) {
+                        logger.warn("[WARN] lang is not passed in CLI or defined as BOT_PRIMARY_LANGUAGE in ENV.");
+                        primaryLanguage = DEFAULT_BOT_LANG;
+                    }
+                }
             } else {
                 throw new InvalidArgumentError("action is illegal.")
             }
 
             // Call handler for specific job
-            let payload = { provider, clientid, clientsecret, accessToken, botLang, botName };
-            await handler[action].call(null, payload);
+            let payload = { provider, clientid, clientsecret, accessToken, primaryLanguage, botName };
+
+
+            /**
+             * Checks before run
+             */
+            let envfile = getCurrentEnvFile();
+            if (envfile) {
+                let envs = parseEnvFile(envfile);
+                debug("[envs] %j", envs);
+
+                if (("BOT_CLIENT_ID" in envs) || ("BOT_CLIENT_SECRET" in envs)) {
+                    throw new InvalidArgumentError("For `create` action, BOT_CLIENT_ID and BOT_CLIENT_SECRET should not present in envfile " + envfile)
+                }
+            }
+
+            /**
+             * Run job
+             */
+            let result = await handler[action].call(null, payload);
+
+            /**
+             * Post run
+             */
+            if (action == "create") {
+                // TODO 优化 .env 文件，添加 clientId, secret 信息
+            }
+
         });
 };

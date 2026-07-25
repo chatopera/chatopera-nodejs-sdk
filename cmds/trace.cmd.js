@@ -1,6 +1,6 @@
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 const moment = require("moment-timezone");
 const TRACE_IDS = new Set();
 

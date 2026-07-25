@@ -7,7 +7,7 @@ const debug = require("debug")("chatopera:sdk:handler:project");
  *  payload.accessToken
  * optional: 
  *  payload.provider [default: https://bot.chatopera.com]
- *  payload.botLang
+ *  payload.primaryLanguage
  *  payload.botName
  * 
  */

@@ -26,5 +26,13 @@ fi
 mkdir -p $PRJ_NEW
 cd $PRJ_NEW
 
+export CHATOPERA_BOT_ENVFILE=`pwd`/.env
+
+# touch .env
+# echo "BOT_CLIENT_ID=xx" > .env
+
 export DEBUG=chatopera:sdk:*
-../../bin/bot.js project $*
+../../bin/bot.js project -a create \
+    --access-token ss \
+    --name coi \
+    --lang zh_CN

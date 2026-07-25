@@ -1,5 +1,5 @@
 const Bot = require("../index.js").Chatbot;
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 
 exports = module.exports = async (program) => {
   /**

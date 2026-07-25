@@ -2,7 +2,7 @@ const inquirer = require("inquirer");
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
 const DEFAULT_USER = "commandline";
-const logger = require("../lib/logger");
+const logger = require("../lib/logger.js");
 
 exports = module.exports = (program) => {
   /**
