@@ -42,6 +42,7 @@ async function exportConversations(payload) {
             if (!tempDirC66) {
                 let ts = utils.getTimestamp();
                 tempDirC66 = path.join(tempdir, data.name.replace(/\*/g, "_") + "." + ts);
+                payload.tempDirC66 = tempDirC66;
             }
 
             if (!fs.existsSync(tempDirC66)) {
@@ -102,7 +103,7 @@ async function exportConversations(payload) {
         logger.error(e);
         return false;
     }
-    return true;
+    return payload;
 }
 
 /**

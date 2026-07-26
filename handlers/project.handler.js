@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Chatopera = require("../chatopera");
 const { InvalidArgumentError } = require("commander");
-const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines } = require("../lib/utils");
+const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite } = require("../lib/utils");
 const readlineq = require('readlineq').default;
 const { getCurrentEnvFile, parseEnvFile } = require("../lib/loadenv");
 const { exportConversations } = require("./conversation.handler");
@@ -117,6 +117,10 @@ const pullBotProject = async (payload) => {
     }
 
     let tobeSavedLines = [];
+    if ((!env["BOT_PROVIDER"]) || (env["BOT_PROVIDER"] !== payload.provider)) {
+        tobeSavedLines.push("BOT_PROVIDER=" + payload.provider);
+    }
+
     if ((!env["BOT_CLIENT_ID"]) || (env["BOT_CLIENT_ID"] !== payload.clientid)) {
         tobeSavedLines.push("BOT_CLIENT_ID=" + payload.clientid);
     }
@@ -132,8 +136,55 @@ const pullBotProject = async (payload) => {
     /**
      * Download c66 files to tmpDir 
      */
-    let exportSucc = await exportConversations(payload);
-    debug("exportSucc %s", exportSucc);
+    let exportResult = await exportConversations(payload);
+    debug("exportResult %s", exportResult);
+
+    if (!exportResult) {
+        // export conversations fails
+        throw new Error("Fail to export conversations.");
+    }
+
+    /**
+     * 导出成功，重新建立项目文件夹
+     */
+    const tempDirC66 = exportResult.tempDirC66;
+
+    // 重构 chatopera.json 文件: 合并，如果有 chatopera.json 文件，就只更新其中的 manifest
+    const chatoperaJsonFpath = path.join(payload.projectDir, CHATOPERA_JSON_FNAME)
+    let chatoperaJson = {};
+
+    if (fs.existsSync(chatoperaJsonFpath)) {
+        chatoperaJson = await readJSONFile(chatoperaJsonFpath);
+    }
+
+    const indexJson = await readJSONFile(path.join(tempDirC66, "index.json"));
+    chatoperaJson["manifest"] = indexJson;
+
+    // save chatopera json
+    await writeJSONFile(chatoperaJsonFpath, chatoperaJson);
+
+    // 复制 plugin.js 文件
+    const pluginJsFpath = path.join(payload.projectDir, "plugin.js");
+    const tmpPluginJsFpath = path.join(tempDirC66, "plugin.js");
+    copyConsiderringOverwrite(tmpPluginJsFpath, pluginJsFpath);
+
+    // 复制 conversations 文件
+    // 建立文件夹
+    const conversationsDir = path.join(payload.projectDir, "conversations");
+    if (fs.existsSync(conversationsDir)) {
+        fs.rmdirSync(conversationsDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(conversationsDir);
+
+    // 复制文件
+    if ("conversations" in indexJson) {
+        for (let c of indexJson["conversations"]) {
+            let cName = c["name"];
+            let cEnabled = c["enabled"];
+            let cScriptFilePath = path.join(tempDirC66, indexJson["primaryLanguage"] + "." + cName + ".ms");
+            copyConsiderringOverwrite(cScriptFilePath, path.join(conversationsDir, cName + ".ms"));
+        }
+    }
 }
 
 

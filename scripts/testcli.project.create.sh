@@ -18,17 +18,24 @@ export PRJ_NEW=tmp/projectnew
 # main 
 [ -z "${BASH_SOURCE[0]}" -o "${BASH_SOURCE[0]}" = "$0" ] || return
 
+export NODE_HOME=/opt/node/24
+export PATH=$NODE_HOME/bin:$PATH
+
+
 cd $baseDir/..
-if [ -d $PRJ_NEW ]; then
-    rm -rf $PRJ_NEW
+if [ -d $PRJ_NEW/.cde ]; then
+    rm -rf $PRJ_NEW/.cde
 fi
 
 mkdir -p $PRJ_NEW
 cd $PRJ_NEW
 
+rm -rf .env
 # export CHATOPERA_BOT_ENVFILE=`pwd`/.env
 # touch .env
 # echo "BOT_CLIENT_ID=xx" > .env
+
+echo "ss" > plugin.js
 
 export DEBUG=chatopera:sdk:*
 ../../bin/bot.js project -a create \
