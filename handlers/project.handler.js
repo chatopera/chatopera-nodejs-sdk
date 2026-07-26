@@ -7,6 +7,8 @@ const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSO
 const readlineq = require('readlineq').default;
 const { getCurrentEnvFile, parseEnvFile } = require("../lib/loadenv");
 const { exportConversations } = require("./conversation.handler");
+const { ConversationExportError } = require("../lib/exceptions.js");
+
 
 /**
  * create a new project
@@ -65,10 +67,9 @@ const createBotProject = async (payload) => {
         // pull bot in projectDir
         payload.clientid = botInfo.data.clientId;
         payload.clientsecret = botInfo.data.secret;
-
-        let botPullResult = await pullBotProject(payload);
-
-        // TODO handel result and merge into botInfo
+        botInfo = await pullBotProject(payload);
+        console.log(">> Bot project is created sucessfully -->", botInfo.projectDir)
+        console.log(">> Read README.md file in " + botInfo.projectDir + " to get start.")
     } else {
         console.log(JSON.stringify(botInfo, null, " "));
         throw new Error("Unexpected response for bot create.");
@@ -80,6 +81,12 @@ const createBotProject = async (payload) => {
 /**
  * Pull Bot Project from BotProvider
  * @param {*} payload 
+ *   Required:
+ *         * payload.projectDir: 将项目下载的根目录
+ *         * payload.clientid
+ *         * payload.clientsecret
+ *   Optional:
+ *         * payload.provider: default https://bot.chatopera.com
  */
 const pullBotProject = async (payload) => {
     debug("[pullBotProject] payload %s", payload);
@@ -141,7 +148,7 @@ const pullBotProject = async (payload) => {
 
     if (!exportResult) {
         // export conversations fails
-        throw new Error("Fail to export conversations.");
+        throw new ConversationExportError("Fail to export conversations.");
     }
 
     /**
@@ -172,11 +179,11 @@ const pullBotProject = async (payload) => {
     // 建立文件夹
     const conversationsDir = path.join(payload.projectDir, "conversations");
     if (fs.existsSync(conversationsDir)) {
-        fs.rmdirSync(conversationsDir, { recursive: true, force: true });
+        fs.rmSync(conversationsDir, { recursive: true, force: true })
     }
     fs.mkdirSync(conversationsDir);
 
-    // 复制文件
+    // 复制 scripts 文件
     if ("conversations" in indexJson) {
         for (let c of indexJson["conversations"]) {
             let cName = c["name"];
@@ -185,6 +192,16 @@ const pullBotProject = async (payload) => {
             copyConsiderringOverwrite(cScriptFilePath, path.join(conversationsDir, cName + ".ms"));
         }
     }
+
+    // create README.md
+    readlineq(path.join(payload.projectDir, "README.md"), [
+        "# Bot Project\n",
+        "Get more info with [LINK](https://docs.chatopera.com/products/chatbot-platform/tutorials/index.html).\n"
+    ])
+
+    // at last, return chatopera json in payload
+    payload["chatopera"] = chatoperaJson;
+    return payload;
 }
 
 
