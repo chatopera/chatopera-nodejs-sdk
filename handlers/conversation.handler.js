@@ -1,6 +1,7 @@
 const debug = require("debug")("chatopera:sdk:handler:conversation");
 const fs = require("fs");
 const path = require("path");
+const _ = require("lodash");
 const Bot = require("../index.js").Chatbot;
 const readlineq = require("readlineq").default;
 const logger = require("../lib/logger.js");
@@ -18,7 +19,9 @@ async function exportConversations(payload) {
         return false;
     }
 
-    logger.log("[exportConversations] payload", payload);
+    logger.log("[exportConversations] payload", _.assign({}, payload, {
+        clientsecret: "***"
+    }));
 
     // upload faq data
     let client = null;

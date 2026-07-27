@@ -71,10 +71,10 @@ const createBotProject = async (payload) => {
         payload.clientid = botInfo.data.clientId;
         payload.clientsecret = botInfo.data.secret;
         botInfo = await pullBotProject(payload);
-        console.log(">> Bot project is created sucessfully -->", botInfo.projectDir)
-        console.log(">> Read README.md file in " + botInfo.projectDir + " to get start.")
+        logger.info(">> Bot project is created sucessfully -->", botInfo.projectDir)
+        logger.info(">> Read README.md file in " + botInfo.projectDir + " to get start.")
     } else {
-        console.log(JSON.stringify(botInfo, null, " "));
+        logger.info(JSON.stringify(botInfo, null, " "));
         throw new Error("Unexpected response for bot create.");
     }
 
@@ -204,6 +204,7 @@ const pullBotProject = async (payload) => {
 
     // at last, return chatopera json in payload
     payload["chatopera"] = chatoperaJson;
+    logger.log(">> [pullBotProject] pull done.");
     return payload;
 }
 
