@@ -1,3 +1,8 @@
+# 2.9.5
+
+- 支持 `bot project --action [create, push, pull]` 命令
+- 重构项目目录，使用 cmds, handlers
+
 # 2.5.2
 
 - 支持使用配置文件 .env
