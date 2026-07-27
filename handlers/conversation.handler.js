@@ -16,7 +16,7 @@ async function exportConversations(payload) {
         return false;
     }
 
-    logger.log("export", payload);
+    logger.log("[exportConversations] payload", payload);
 
     // upload faq data
     let client = null;

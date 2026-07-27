@@ -5,6 +5,7 @@ const logger = require("../lib/logger.js");
 const { DEFAULT_BOT_PROVIDER, DEFAULT_BOT_LANG } = require("../lib/utils.js");
 const handler = require("../handlers/project.handler.js");
 const { parseEnvFile, getCurrentEnvFile } = require("../lib/loadenv.js"); // load environment variables
+const cwdDir = process.cwd();
 
 exports = module.exports = async (program) => {
     /**
@@ -34,6 +35,10 @@ exports = module.exports = async (program) => {
             ])
         )
         .option(
+            "--project-dir [value]",
+            "Project dir path, default $PWD"
+        )
+        .option(
             "--name [value]",
             "Name of chatbot"
         )
@@ -47,7 +52,7 @@ exports = module.exports = async (program) => {
             ])
         )
         .action(async (cmd) => {
-            let { provider, clientid, clientsecret, accessToken, action, name: botName, lang: primaryLanguage } = cmd;
+            let { provider, clientid, clientsecret, accessToken, projectDir, action, name: botName, lang: primaryLanguage } = cmd;
 
             // 检查是否有 bot provider 和 accessToken
             if (typeof provider === "boolean" || !provider) {
@@ -117,6 +122,13 @@ exports = module.exports = async (program) => {
             }
 
             /**
+             * Resolve project dir
+             */
+            if (typeof projectDir === "boolean" || !projectDir) {
+                projectDir = cwdDir;
+            }
+
+            /**
              * Checks before run
              */
             let envfile = getCurrentEnvFile();
@@ -124,7 +136,7 @@ exports = module.exports = async (program) => {
                 let envs = parseEnvFile(envfile);
                 debug("[envs] %j", envs);
 
-                if (("BOT_CLIENT_ID" in envs) || ("BOT_CLIENT_SECRET" in envs)) {
+                if ((action == "create") && (("BOT_CLIENT_ID" in envs) || ("BOT_CLIENT_SECRET" in envs))) {
                     throw new InvalidArgumentError("For `create` action, BOT_CLIENT_ID and BOT_CLIENT_SECRET should not present in envfile " + envfile)
                 }
             }
@@ -133,14 +145,13 @@ exports = module.exports = async (program) => {
              * Run job
              */
             // Call handler for specific job
-            let payload = { provider, clientid, clientsecret, accessToken, primaryLanguage, botName, projectDir: process.cwd() };
+            let payload = { provider, clientid, clientsecret, accessToken, primaryLanguage, botName, projectDir };
             let result = await handler[action].call(null, payload);
 
             /**
              * Post run
              */
-            if (action == "create") {
-                // TODO 优化 .env 文件，添加 clientId, secret 信息
-            }
+            // if (action == "create") {
+            // }
         });
 };

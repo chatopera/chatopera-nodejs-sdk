@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Chatopera = require("../chatopera");
 const { InvalidArgumentError } = require("commander");
-const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite } = require("../lib/utils");
+const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite, DEFAULT_CACHED_WORKSDIR } = require("../lib/utils");
 const readlineq = require('readlineq').default;
 const { getCurrentEnvFile, parseEnvFile } = require("../lib/loadenv");
 const { exportConversations } = require("./conversation.handler");
@@ -103,7 +103,7 @@ const pullBotProject = async (payload) => {
     }
 
     // create tmp dir
-    const tmpDir = path.join(payload.projectDir, DEFAULT_CACHED_DIR, "pullWorkTmp");
+    const tmpDir = path.join(payload.projectDir, DEFAULT_CACHED_DIR, DEFAULT_CACHED_WORKSDIR, "pull");
     if (fs.existsSync(tmpDir)) {
         fs.rmSync(tmpDir, { recursive: true, force: true });
     }
@@ -204,9 +204,12 @@ const pullBotProject = async (payload) => {
     return payload;
 }
 
-
+/**
+ * Push conversations into provider
+ * @param {*} payload 
+ */
 const pushBotProject = async (payload) => {
-
+    debug("[pushBotProject] payload %s", payload);
 }
 
 
