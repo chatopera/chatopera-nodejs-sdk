@@ -138,7 +138,7 @@ exports = module.exports = async (program) => {
             let envsInProjectDir = {};
             if (fs.existsSync(envfile)) {
                 let envsInProjectDir = parseEnvFile(envfile);
-                debug("[envsInProjectDir] %j", envs);
+                debug("[envsInProjectDir] %j", envsInProjectDir);
             }
 
             if (/*Do checks for `create`*/action == "create") {

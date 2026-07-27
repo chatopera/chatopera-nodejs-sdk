@@ -354,7 +354,12 @@ const pushBotProject = async (payload) => {
         filepath: tmpDir,
         tempDir: path.join(payload.projectDir, DEFAULT_CACHED_DIR, DEFAULT_CACHED_WORKSDIR)
     }));
+
     debug("[pushBotProject] importResult %o", importResult);
+    // 没有报错，更新成功，同步 chatopera.json
+    chatoperaJson["manifest"] = indexJson;
+    await writeJSONFile(chatoperaJsonFilePath, chatoperaJson);
+
     return importResult;
 }
 
