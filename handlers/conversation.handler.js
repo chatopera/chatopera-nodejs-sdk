@@ -5,6 +5,8 @@ const Bot = require("../index.js").Chatbot;
 const readlineq = require("readlineq").default;
 const logger = require("../lib/logger.js");
 const tempdir = require("../lib/tempdir.js");
+const utils = require("../lib/utils.js");
+const { ConversationImportError } = require("../lib/exceptions.js");
 
 /**
  * 导出 Chatopera 机器人平台多轮对话
@@ -131,7 +133,8 @@ async function importConversations(payload) {
 
             // compress filepath to zip
             let ts = utils.getTimestamp();
-            tempc66 = path.join(tempdir, pkg.name + "." + ts + ".c66");
+            let tmpDirPath = payload.tempDir ? payload.tempDir : tempdir;
+            tempc66 = path.join(tmpDirPath, pkg.name + "." + ts + ".c66");
 
             await utils.zipDirectory(payload.filepath, tempc66);
             debug("Import generate temp file %s", tempc66);
@@ -164,6 +167,12 @@ async function importConversations(payload) {
             }
             debug("%s removed.", tempc66);
         });
+    }
+
+    if (("rc" in result) && (result["rc"] == 0)) {
+        return true;
+    } else {
+        throw new ConversationImportError(JSON.stringify(result));
     }
 }
 

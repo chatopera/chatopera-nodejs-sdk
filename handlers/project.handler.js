@@ -4,12 +4,14 @@ const path = require("path");
 const _ = require("lodash");
 const Chatopera = require("../chatopera");
 const { InvalidArgumentError } = require("commander");
-const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite, DEFAULT_CACHED_WORKSDIR } = require("../lib/utils");
+const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite, DEFAULT_CACHED_WORKSDIR, removeFilenameExtension, CONVERSATION_NAME_PATTERN } = require("../lib/utils");
 const readlineq = require('readlineq').default;
 const { getCurrentEnvFile, parseEnvFile } = require("../lib/loadenv");
-const { exportConversations } = require("./conversation.handler");
+const { exportConversations, importConversations } = require("./conversation.handler");
 const { ConversationExportError, ConversationImportError } = require("../lib/exceptions.js");
 const detailsHandler = require("../handlers/details.handler.js");
+const logger = require("../lib/logger.js");
+
 
 /**
  * create a new project
@@ -231,18 +233,6 @@ const pushBotProject = async (payload) => {
         throw new ConversationImportError(`projectdir ${payload.projectDir} must exist.`);
     }
 
-    // check clientid and secret
-    let botInfo = await detailsHandler.getDetails(payload);
-
-    if (("rc" in botInfo) && (botInfo.rc == 0)) {
-        debug("[pushBotProject] bot exist and credentials works.");
-    } else {
-        debug("[pushBotProject] response %s", botInfo);
-        // { rc: 5, error: 'internal error' }, for invalid bot clientid
-        // { rc: 1, error: 'invalid signature.' }, for invalid bot secret
-        throw new ConversationImportError("Bot not exist or secret is incorrect.");
-    }
-
     let chatoperaJsonFilePath = path.join(payload.projectDir, "chatopera.json");
     if (!fs.existsSync(chatoperaJsonFilePath)) {
         throw new ConversationImportError("Chatopera JSON file[chatopera.json] not exist");
@@ -258,25 +248,115 @@ const pushBotProject = async (payload) => {
     if (!_.isPlainObject(indexJson)) {
         throw new ConversationImportError("Invalid `manifest` object in chatopera.json");
     }
-    // TODO more checks of indexJson properties.
+
+    // check clientid and secret
+    let botInfo = await detailsHandler.getDetails(payload);
+
+    if (("rc" in botInfo) && (botInfo.rc == 0)) {
+        debug("[pushBotProject] bot exist and credentials works --> %o", botInfo);
+        logger.log(`>> bot[${botInfo.data.name}] connected, start to push local files ...`);
+        // check language settings, must match.
+        // a bot can not change language after create.
+        if (botInfo.data.primaryLanguage !== indexJson.primaryLanguage) {
+            throw new ConversationImportError(`Can not import project, remote chatbot's lang[${botInfo.data.primaryLanguage}] does not match local settings[${indexJson.primaryLanguage}]`);
+        }
+
+        // TODO more checks of indexJson properties.
+    } else {
+        debug("[pushBotProject] response %s", botInfo);
+        // { rc: 5, error: 'internal error' }, for invalid bot clientid
+        // { rc: 1, error: 'invalid signature.' }, for invalid bot secret
+        throw new ConversationImportError("Bot not exist or secret is incorrect.");
+    }
 
     let pluginJsFilePath = path.join(payload.projectDir, "plugin.js");
-    if (!fs.existsSync(pluginJsFilePath)) {
-        throw new ConversationImportError("Plugin js file[plugin.js] not exist");
-    }
+    // set plugin.js as not required.
+    // if (!fs.existsSync(pluginJsFilePath)) {
+    //     throw new ConversationImportError("Plugin js file[plugin.js] not exist");
+    // }
 
     /**
      * Now, do package
      */
     // check conversation files
-    fs.readdirSync('./dirpath', { withFileTypes: true })
-        .filter(item => ((!item.isDirectory()) && item.name.endsWith(".ms")))
-        .map(item => item.name)
+    let conversationsDir = path.join(payload.projectDir, "conversations");
+    let conversationFiles = [];
+    let conversationsAfter = [];
+    let conversationsAfterAdded = new Set();
+    if (fs.existsSync(conversationsDir)) {
+        conversationFiles = fs.readdirSync(conversationsDir, { withFileTypes: true })
+            .filter(item => ((!item.isDirectory()) && item.name.endsWith(".ms")))
+            .map(item => removeFilenameExtension(item.name, "ms"));
 
+    }
 
+    // Check file names, match [a-zA-Z0-9_]
+    if (conversationFiles.length > 0) {
+        for (let c of conversationFiles) {
+            let matched = CONVERSATION_NAME_PATTERN.test(c);
+            if (!matched) {
+                throw new ConversationImportError(`conversation name [${c}] is illegal, use string with letter, number or _.`);
+            }
+        }
+    }
+
+    // remove conversation not exist in dir
+    if (("conversations" in indexJson) && (_.isArray(indexJson["conversations"]))) {
+        for (let c of indexJson["conversations"]) {
+            if (conversationFiles.includes(c.name)) {
+                conversationsAfter.push(c);
+                conversationsAfterAdded.add(c.name);
+            }
+        }
+    }
+
+    // add new conversation
+    for (let cName of conversationFiles) {
+        if (!conversationsAfterAdded.has(cName)) {
+            conversationsAfter.push({
+                name: cName,
+                enabled: true,
+            });
+            conversationsAfterAdded.add(cName);
+        }
+    }
+    // sort with alphabetical order
+    conversationsAfter.sort((a, b) => a.name > b.name ? 1 : -1);
+    indexJson["conversations"] = conversationsAfter;
+
+    /**
+     * Now, start to copy files
+     */
+    const tmpDir = path.join(payload.projectDir, DEFAULT_CACHED_DIR, DEFAULT_CACHED_WORKSDIR, "push");
+
+    // make sure tmpDir is empty
+    if (fs.existsSync(tmpDir)) {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    fs.mkdirSync(tmpDir, { recursive: true, force: true });
+
+    // write file index.json
+    await writeJSONFile(path.join(tmpDir, "index.json"), indexJson);
+
+    // write file plugin.js if exist
+    if (fs.existsSync(pluginJsFilePath)) {
+        copyConsiderringOverwrite(pluginJsFilePath, path.join(tmpDir, "plugin.js"));
+    }
+
+    // write conversations
+    for (let c of conversationsAfterAdded) {
+        copyConsiderringOverwrite(path.join(payload.projectDir, "conversations", c + ".ms"), path.join(tmpDir, `${indexJson.primaryLanguage}.${c}.ms`));
+    }
+
+    // import project
+    let importResult = await importConversations(_.assign({}, payload, {
+        filepath: tmpDir,
+        tempDir: path.join(payload.projectDir, DEFAULT_CACHED_DIR, DEFAULT_CACHED_WORKSDIR)
+    }));
+    debug("[pushBotProject] importResult %o", importResult);
+    return importResult;
 }
-
-
 
 module.exports = exports = {
     create: createBotProject,

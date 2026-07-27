@@ -1,11 +1,13 @@
 const debug = require("debug")("chatopera:sdk:cli:project");
+const cwdDir = process.cwd();
+const path = require("path");
+const fs = require("fs");
 const Bot = require("../index.js").Chatbot;
 const { InvalidArgumentError, Option } = require("commander");
 const logger = require("../lib/logger.js");
 const { DEFAULT_BOT_PROVIDER, DEFAULT_BOT_LANG } = require("../lib/utils.js");
 const handler = require("../handlers/project.handler.js");
 const { parseEnvFile, getCurrentEnvFile } = require("../lib/loadenv.js"); // load environment variables
-const cwdDir = process.cwd();
 
 exports = module.exports = async (program) => {
     /**
@@ -131,14 +133,21 @@ exports = module.exports = async (program) => {
             /**
              * Checks before run
              */
-            let envfile = getCurrentEnvFile();
-            if (envfile) {
-                let envs = parseEnvFile(envfile);
-                debug("[envs] %j", envs);
+            // parse env in projectDir
+            let envfile = path.join(projectDir, ".env");
+            let envsInProjectDir = {};
+            if (fs.existsSync(envfile)) {
+                let envsInProjectDir = parseEnvFile(envfile);
+                debug("[envsInProjectDir] %j", envs);
+            }
 
-                if ((action == "create") && (("BOT_CLIENT_ID" in envs) || ("BOT_CLIENT_SECRET" in envs))) {
+            if (/*Do checks for `create`*/action == "create") {
+                if ((("BOT_CLIENT_ID" in envsInProjectDir) || ("BOT_CLIENT_SECRET" in envsInProjectDir))) {
                     throw new InvalidArgumentError("For `create` action, BOT_CLIENT_ID and BOT_CLIENT_SECRET should not present in envfile " + envfile)
                 }
+                // force unset clientid and clientsecret for create
+                clientid = null;
+                clientsecret = null;
             }
 
             /**
