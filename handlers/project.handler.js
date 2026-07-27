@@ -1,14 +1,15 @@
 const debug = require("debug")("chatopera:sdk:handler:project");
 const fs = require("fs");
 const path = require("path");
+const _ = require("lodash");
 const Chatopera = require("../chatopera");
 const { InvalidArgumentError } = require("commander");
 const { DEFAULT_BOT_PROVIDER, DEFAULT_CACHED_DIR, appendFileLines, CHATOPERA_JSON_FNAME, readJSONFile, writeJSONFile, copyConsiderringOverwrite, DEFAULT_CACHED_WORKSDIR } = require("../lib/utils");
 const readlineq = require('readlineq').default;
 const { getCurrentEnvFile, parseEnvFile } = require("../lib/loadenv");
 const { exportConversations } = require("./conversation.handler");
-const { ConversationExportError } = require("../lib/exceptions.js");
-
+const { ConversationExportError, ConversationImportError } = require("../lib/exceptions.js");
+const detailsHandler = require("../handlers/details.handler.js");
 
 /**
  * create a new project
@@ -210,6 +211,69 @@ const pullBotProject = async (payload) => {
  */
 const pushBotProject = async (payload) => {
     debug("[pushBotProject] payload %s", payload);
+    //     payload {
+    //   provider: 'https://bot.chatopera.com',
+    //   clientid: '6a66a645cb65b20013667d97',
+    //   clientsecret: '91b783e833da232eb0ce1016724ee3f5',
+    //   accessToken: undefined,
+    //   primaryLanguage: undefined,
+    //   botName: undefined,
+    //   projectDir: '/home/hai/git/chatopera-nodejs-sdk/tmp/projectnew' }
+
+    /**
+     * BEFORE PUSH, CHECKS
+     */
+    if (!payload.projectDir) {
+        throw new ConversationImportError("`projectdir` is required in payload for push task.");
+    }
+
+    if (!fs.existsSync(payload.projectDir)) {
+        throw new ConversationImportError(`projectdir ${payload.projectDir} must exist.`);
+    }
+
+    // check clientid and secret
+    let botInfo = await detailsHandler.getDetails(payload);
+
+    if (("rc" in botInfo) && (botInfo.rc == 0)) {
+        debug("[pushBotProject] bot exist and credentials works.");
+    } else {
+        debug("[pushBotProject] response %s", botInfo);
+        // { rc: 5, error: 'internal error' }, for invalid bot clientid
+        // { rc: 1, error: 'invalid signature.' }, for invalid bot secret
+        throw new ConversationImportError("Bot not exist or secret is incorrect.");
+    }
+
+    let chatoperaJsonFilePath = path.join(payload.projectDir, "chatopera.json");
+    if (!fs.existsSync(chatoperaJsonFilePath)) {
+        throw new ConversationImportError("Chatopera JSON file[chatopera.json] not exist");
+    }
+
+    let chatoperaJson = await readJSONFile(chatoperaJsonFilePath);
+
+    if (!("manifest" in chatoperaJson)) {
+        throw new ConversationImportError("`manifest` info not exist in chatoperaJson");
+    }
+
+    let indexJson = chatoperaJson["manifest"];
+    if (!_.isPlainObject(indexJson)) {
+        throw new ConversationImportError("Invalid `manifest` object in chatopera.json");
+    }
+    // TODO more checks of indexJson properties.
+
+    let pluginJsFilePath = path.join(payload.projectDir, "plugin.js");
+    if (!fs.existsSync(pluginJsFilePath)) {
+        throw new ConversationImportError("Plugin js file[plugin.js] not exist");
+    }
+
+    /**
+     * Now, do package
+     */
+    // check conversation files
+    fs.readdirSync('./dirpath', { withFileTypes: true })
+        .filter(item => ((!item.isDirectory()) && item.name.endsWith(".ms")))
+        .map(item => item.name)
+
+
 }
 
 

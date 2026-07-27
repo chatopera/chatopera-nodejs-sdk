@@ -1,5 +1,5 @@
-const Bot = require("../index.js").Chatbot;
 const logger = require("../lib/logger.js");
+const { getDetails } = require("../handlers/details.handler.js");
 
 exports = module.exports = async (program) => {
   /**
@@ -55,14 +55,11 @@ exports = module.exports = async (program) => {
         );
       }
 
-      let client = null;
-      if (provider) {
-        client = new Bot(clientid, clientsecret, provider);
-      } else {
-        client = new Bot(clientid, clientsecret);
-      }
-
-      let data = await client.command("GET", "/");
+      let data = await getDetails({
+        provider,
+        clientid,
+        clientsecret
+      });
 
       logger.log(JSON.stringify(data, null, 2));
     });
