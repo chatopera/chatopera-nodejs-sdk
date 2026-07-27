@@ -20,7 +20,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
 const ENV_FILE = ".env";
-const readlineq = require("readlineq");
+const readlineq = require("readlineq").default;
 const logger = require("../lib/logger");
 
 exports = module.exports = (program) => {
@@ -32,22 +32,21 @@ exports = module.exports = (program) => {
     .description(
       "chat with bot via bot#conversation interface, https://dwz.chatopera.com/T0CZ0R"
     )
-    .option("--folderpath [value]", "Path to generate .env file, default is process.cwd()")
+    .option("--project-dir [value]", "Path to generate .env file, default is process.cwd()")
     .action(async (cmd) => {
 
-      let { folderpath } =
-        cmd;
+      let { projectDir } = cmd;
 
-      if (typeof folderpath === "boolean" || !folderpath) {
-        folderpath = workdir;
+      if (typeof projectDir === "boolean" || !projectDir) {
+        projectDir = workdir;
       }
 
-      if (!fs.existsSync(folderpath)) {
-        logger.error("--folderpath should an existed folder path");
+      if (!fs.existsSync(projectDir)) {
+        logger.error("--project-dir should an existed folder path");
         process.exit(1);
       }
 
-      let envfilepath = path.join(folderpath, ENV_FILE);
+      let envfilepath = path.join(projectDir, ENV_FILE);
       let defaults = ["# Chatopera BOT Platform",
         "BOT_PROVIDER=https://bot.chatopera.com",
         "BOT_CLIENT_ID=",

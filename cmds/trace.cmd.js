@@ -2,51 +2,9 @@ const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
 const logger = require("../lib/logger.js");
 const moment = require("moment-timezone");
+const { sleep } = require("../lib/utils.js");
+const traceHandler = require("../handlers/trace.handler.js");
 const TRACE_IDS = new Set();
-
-function traceLoop(client, logLevel, afterDate) {
-  return new Promise((resolve, reject) => {
-    client
-      .command("POST", "/conversation/trace", {
-        logLevel: logLevel,
-        afterDate: afterDate,
-      })
-      .then((res) => {
-        if (res.rc === 0 && res.data && res.data.length > 0) {
-          let len = res.data.length - 1;
-          let afterDate = null;
-          for (let i = 0; i < len; i++) {
-            // 去重
-            if (TRACE_IDS.has(res.data[i]["id"])) continue;
-            TRACE_IDS.add(res.data[i]["id"]);
-
-            var date = moment.tz(res.data[i]["createdAt"], process.env.TZ);
-            logger.log(
-              "%s %s %s %s",
-              date.format("YYYY-MM-DD HH:mm:ss"),
-              res.data[i]["logLevel"],
-              res.data[i]["service"],
-              res.data[i]["message"]
-            );
-            if (i == len) {
-              afterDate = res.data[i]["createdAt"];
-            }
-          }
-          resolve({
-            afterDate,
-          });
-        } else {
-          // 没有得到数据
-          resolve({
-            afterDate,
-          });
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
 
 exports = module.exports = async (program) => {
   /**
@@ -113,28 +71,41 @@ exports = module.exports = async (program) => {
       }
       logger.log("[trace] clientId %s, logLevel %s", clientid, logLevel);
 
-      let client = null;
-      if (provider) {
-        client = new Bot(clientid, clientsecret, provider);
-      } else {
-        client = new Bot(clientid, clientsecret);
-      }
-
-      const sleep = () => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve();
-          }, 3000);
-        });
-      };
-
       let afterDate = null;
+      let keepWatchLog = true;
 
-      while (true) {
-        let ret = await traceLoop(client, logLevel, afterDate);
-        if (ret.afterDate) afterDate = ret.afterDate;
-        // 每3s请求一次日志
-        await sleep();
-      }
+      while (keepWatchLog) {
+        try {
+          let ret = await traceHandler.fetchTraceLog(clientid, clientsecret, provider, logLevel, afterDate);
+
+          if (ret.data) {
+            let len = ret.data.length - 1;
+            for (let i = 0; i < len; i++) {
+              // 去重
+              if (TRACE_IDS.has(ret.data[i]["id"])) continue;
+              TRACE_IDS.add(ret.data[i]["id"]);
+
+              var date = moment.tz(ret.data[i]["createdAt"], process.env.TZ);
+              logger.log(
+                "%s %s %s %s",
+                date.format("YYYY-MM-DD HH:mm:ss"),
+                ret.data[i]["logLevel"],
+                ret.data[i]["service"],
+                ret.data[i]["message"]
+              );
+              if (i == len) {
+                afterDate = ret.data[i]["createdAt"];
+              }
+            }
+          } else if (ret.afterDate) {
+            afterDate = ret.afterDate;
+          }
+
+          // 每3s请求一次日志
+          await sleep(3);
+        } catch (err) {
+          console.error(err);
+        }
+      };
     });
-};
+}

@@ -1,8 +1,12 @@
-const inquirer = require("inquirer");
+const inquirer = require("inquirer").default;
 const debug = require("debug")("chatopera:sdk:cli");
 const Bot = require("../index.js").Chatbot;
 const DEFAULT_USER = "commandline";
 const logger = require("../lib/logger.js");
+const inquirerCommandPrompt = require("inquirer-command-prompt");
+const path = require("path");
+const homedir = require("os").homedir();
+const historyFolder = path.join(homedir, ".cache", "chatopera", "sdk");
 
 exports = module.exports = (program) => {
   /**
@@ -158,13 +162,9 @@ exports = module.exports = (program) => {
         } else {
           client = new Bot(clientid, clientsecret);
         }
-        const inquirerCommandPrompt = require("inquirer-command-prompt");
-        const path = require("path");
 
         // 历史查询，加快输入
         // https://github.com/sullof/inquirer-command-prompt
-        const homedir = require("os").homedir();
-        const historyFolder = path.join(homedir, ".cache", "chatopera", "sdk");
         inquirerCommandPrompt.setConfig({
           history: {
             save: true,
