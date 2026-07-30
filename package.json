@@ -1,6 +1,6 @@
 {
   "name": "@chatopera/sdk",
-  "version": "2.9.7",
+  "version": "2.9.8",
   "description": "重新定义聊天机器人，https://bot.chatopera.com",
   "main": "index.js",
   "bin": {
@@ -43,8 +43,7 @@
     "js-yaml": "^5.2.1",
     "lodash": "^4.18.1",
     "moment-timezone": "^0.6.3",
-    "readlineq": "^3.0.1",
-    "superagent": "^10.3.0"
+    "readlineq": "^3.0.1"
   },
   "devDependencies": {
     "ava": "^8.0.1"

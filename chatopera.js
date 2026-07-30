@@ -1,5 +1,5 @@
 const debug = require('debug')('chatopera:sdk:chatopera');
-const request = require('superagent');
+const request = require('./lib/superagent');
 const BASE_PATH = '/api/v1';
 
 /**

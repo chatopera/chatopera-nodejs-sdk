@@ -9,7 +9,7 @@
  * or decompilation of this software, unless required by law for interoperability, is prohibited.
  */
 const debug = require('debug')('chatopera:sdk:index');
-const request = require('superagent');
+const request = require('./lib/superagent');
 const fs = require('fs');
 const Q = require('@chatopera/q');
 const generate = require('./lib/generate-authorization');
