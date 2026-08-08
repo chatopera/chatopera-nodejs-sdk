@@ -59,7 +59,7 @@ async function exportConversations(payload) {
             // plugin.js
             let plugin = [];
             for (let x of data.plugin) {
-                plugin.push(x + "\n");
+                plugin.push(x.endsWith("\n") ? x : x + "\n");
             }
             readlineq(path.join(tempDirC66, "plugin.js"), plugin);
             delete data["plugin"];

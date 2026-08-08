@@ -85,110 +85,69 @@ Chatbot.prototype.command = function (method, path, payload, headers, attach) {
    * 请求
    */
   let req = request(method, this.host + endpoint);
-  let isSend = true;
+  req
+    .set('X-Requested-With', 'XMLHttpRequest')
+    .set('Expires', '-1')
+    .set(
+      'Cache-Control',
+      'no-cache,no-store,must-revalidate,max-age=-1,private'
+    )
+    .set(
+      'Content-Type',
+      headers && headers['Content-Type']
+        ? headers['Content-Type']
+        : 'application/json'
+    )
+    .set(
+      'Accept',
+      headers && headers['Accept'] ? headers['Accept'] : 'application/json'
+    );
 
-  if (method === 'POST' && path.startsWith('/asr/recognize')) {
-    // 发送文件
-    if (payload['filepath'] && fs.existsSync(payload['filepath'])) {
-      req.set('Content-Type', 'multipart/form-data');
-      req.attach('file', payload['filepath']);
-      if (payload['nbest']) {
-        req.field('nbest', payload['nbest']);
-      }
-
-      if ('pos' in payload) {
-        req.field('pos', payload['pos']);
-      }
-
-      if ('fromUserId' in payload) {
-        req.field('fromUserId', payload['fromUserId']);
-      }
-    } else if (
-      typeof payload['type'] === 'string' &&
-      payload['type'] === 'base64' &&
-      payload['data']
-    ) {
-      req.set('Content-Type', 'application/json');
-      req.send(payload);
-    } else {
-      isSend = false;
-      deferred.reject(
-        new Error({
-          rc: 30,
-          error: 'Invalid type for asr request, add filepath or base64 data.',
-        })
-      );
+  if (attach && attach instanceof Array) {
+    for (let x of attach) {
+      req.attach(x['filename'], x['filepart']);
     }
-
-    req.set('Accept', 'application/json');
-  } else {
-    // 其它普通请求
-    req
-      .set('X-Requested-With', 'XMLHttpRequest')
-      .set('Expires', '-1')
-      .set(
-        'Cache-Control',
-        'no-cache,no-store,must-revalidate,max-age=-1,private'
-      )
-      .set(
-        'Content-Type',
-        headers && headers['Content-Type']
-          ? headers['Content-Type']
-          : 'application/json'
-      )
-      .set(
-        'Accept',
-        headers && headers['Accept'] ? headers['Accept'] : 'application/json'
-      );
-
-    if (attach && attach instanceof Array) {
-      for (let x of attach) {
-        req.attach(x['filename'], x['filepart']);
-      }
-    } else if (payload) {
-      req.send(payload);
-    }
+  } else if (payload) {
+    req.send(payload);
   }
 
   /**
    * 发送及处理结果
    */
-  if (isSend) {
-    // 生成密钥
-    if (this.clientSecret) {
-      req.set(
-        'Authorization',
-        generate(this.clientId, this.clientSecret, method, endpoint)
-      );
-    }
+  // 生成密钥
+  if (this.clientSecret) {
+    req.set(
+      'Authorization',
+      generate(this.clientId, this.clientSecret, method, endpoint)
+    );
+  }
 
-    req.then(
-      (res) => {
-        if (res.body && res.body.rc === 0) {
-          // omit chatbotID
-          if (res.body.data) {
-            if (res.body.data[K_CHATBOT_ID]) {
-              delete res.body.data[K_CHATBOT_ID];
-            } else if (res.body.data instanceof Array) {
-              // fastest loop
-              // https://www.incredible-web.com/blog/performance-of-for-loops-with-javascript/
-              for (let i = res.body.data.length - 1; i >= 0; i--) {
-                delete res.body.data[i][K_CHATBOT_ID];
-              }
+  req.then(
+    (res) => {
+      if (res.body && res.body.rc === 0) {
+        // omit chatbotID
+        if (res.body.data) {
+          if (res.body.data[K_CHATBOT_ID]) {
+            delete res.body.data[K_CHATBOT_ID];
+          } else if (res.body.data instanceof Array) {
+            // fastest loop
+            // https://www.incredible-web.com/blog/performance-of-for-loops-with-javascript/
+            for (let i = res.body.data.length - 1; i >= 0; i--) {
+              delete res.body.data[i][K_CHATBOT_ID];
             }
           }
         }
-        deferred.resolve(res.body);
-      },
-      (err) => {
-        debug('[command] method %s, path %s, Error %s', method, path, err);
-        deferred.reject({
-          rc: 100,
-          error: err,
-        });
       }
-    );
-  }
+      deferred.resolve(res.body);
+    },
+    (err) => {
+      debug('[command] method %s, path %s, Error %s', method, path, err);
+      deferred.reject({
+        rc: 100,
+        error: err,
+      });
+    }
+  );
 
   return deferred.promise;
 };
